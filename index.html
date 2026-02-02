@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holy admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0d0d0d;
+            --bg-lighter: #1a1a1a;
+            --green: #00ff41;
+            --green-dim: #00cc33;
+            --green-darker: #009929;
+            --text: #e0e0e0;
+            --text-dim: #888;
+            --border: #222;
+        }
+
+        body {
+            font-family: 'IBM Plex Mono', monospace;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            margin-bottom: 50px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 500;
+            color: var(--green);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .config-section {
+            background: var(--bg-lighter);
+            border: 1px solid var(--green-darker);
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .config-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .config-header h3 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--green);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--bg-lighter);
+            border: 1px solid var(--border);
+            padding: 24px;
+        }
+
+        .card h2 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--green);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--green-darker);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .number-input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--green);
+            border: none;
+            color: var(--bg);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: var(--green-dim);
+        }
+
+        button:active {
+            background: var(--green-darker);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .servers-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .server-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.2s;
+        }
+
+        .server-item:hover {
+            border-color: var(--green-darker);
+        }
+
+        .server-info {
+            flex: 1;
+        }
+
+        .server-name {
+            font-weight: 500;
+            color: var(--green);
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        .server-details {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .server-players {
+            background: var(--green);
+            color: var(--bg);
+            padding: 4px 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .no-servers {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-dim);
+        }
+
+        .status-message {
+            margin-top: 14px;
+            padding: 10px 12px;
+            font-size: 0.85rem;
+            border: 1px solid;
+        }
+
+        .status-success {
+            background: rgba(0, 255, 65, 0.1);
+            border-color: var(--green-darker);
+            color: var(--green);
+        }
+
+        .status-error {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: #8b0000;
+            color: #ff4444;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .connection-status {
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 4px 10px;
+            border: 1px solid;
+        }
+
+        .connected {
+            background: rgba(0, 255, 65, 0.1);
+            color: var(--green);
+            border-color: var(--green-darker);
+        }
+
+        .disconnected {
+            background: rgba(255, 0, 0, 0.1);
+            color: #ff4444;
+            border-color: #8b0000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Holy Proxy</h1>
+            <p class="subtitle">Remot admin</p>
+        </header>
+
+        <!-- Configuration Section -->
+        <div class="config-section">
+            <div class="config-header">
+                <h3>Backend Configuration</h3>
+                <span id="connectionStatus" class="connection-status disconnected">Disconnected</span>
+            </div>
+            <div class="form-group">
+                <label for="backendUrl">Backend URL</label>
+                <input type="text" id="backendUrl" placeholder="https://your-url.ngrok-free.app" value="">
+            </div>
+            <button onclick="testConnection()">Connect</button>
+            <div id="configStatus"></div>
+        </div>
+
+        <div class="grid">
+            <!-- Send Hint Card -->
+            <div class="card">
+                <h2>Send Hint</h2>
+                <form id="hintForm" onsubmit="sendHint(event)">
+                    <div class="form-group">
+                        <label for="hintServer">Server</label>
+                        <select id="hintServer" required>
+                            <option value="">Select server...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="hintMessage">Message</label>
+                        <textarea id="hintMessage" placeholder="Enter hint message..." required></textarea>
+                    </div>
+                    <div class="number-input-group">
+                        <div class="form-group">
+                            <label for="typeSpeed">Type Speed (s)</label>
+                            <input type="number" id="typeSpeed" value="0.05" step="0.01" min="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="displayTime">Display (s)</label>
+                            <input type="number" id="displayTime" value="3" step="0.5" min="0.5">
+                        </div>
+                    </div>
+                    <button type="submit">Send</button>
+                </form>
+                <div id="hintStatus"></div>
+            </div>
+
+            <!-- Execute Code Card -->
+            <div class="card">
+                <h2>Execute Code</h2>
+                <form id="runForm" onsubmit="runCode(event)">
+                    <div class="form-group">
+                        <label for="runServer">Server</label>
+                        <select id="runServer" required>
+                            <option value="">Select server...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="runCode">Luau Code</label>
+                        <textarea id="runCode" placeholder="print('Hello World')" required></textarea>
+                    </div>
+                    <button type="submit">Execute</button>
+                </form>
+                <div id="runStatus"></div>
+            </div>
+
+            <!-- Active Servers Card -->
+            <div class="card full-width">
+                <h2>Active Servers</h2>
+                <div id="serversList" class="servers-grid">
+                    <div class="no-servers">Configure backend URL to see servers</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let servers = [];
+        let backendUrl = localStorage.getItem('backendUrl') || '';
+        let refreshInterval;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (backendUrl) {
+                document.getElementById('backendUrl').value = backendUrl;
+                testConnection();
+            }
+        });
+
+        function getBackendUrl() {
+            const url = document.getElementById('backendUrl').value.trim();
+            if (!url) {
+                showStatus('configStatus', 'Please enter a backend URL', true);
+                return null;
+            }
+            return url.replace(/\/$/, '');
+        }
+
+        async function testConnection() {
+            const url = getBackendUrl();
+            if (!url) return;
+
+            localStorage.setItem('backendUrl', url);
+            backendUrl = url;
+
+            showStatus('configStatus', 'Testing connection...', false);
+
+            try {
+                const res = await fetch(`${url}/latestservers`, {
+                    headers: {
+                        'ngrok-skip-browser-warning': '69420'
+                    }
+                });
+                
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                
+                const data = await res.json();
+                
+                showStatus('configStatus', `Connected - found ${data.count} server(s)`, false);
+                updateConnectionStatus(true);
+                
+                loadServers();
+                if (refreshInterval) clearInterval(refreshInterval);
+                refreshInterval = setInterval(loadServers, 5000);
+                
+            } catch (err) {
+                showStatus('configStatus', `Connection failed: ${err.message}`, true);
+                updateConnectionStatus(false);
+                console.error('Connection error:', err);
+            }
+        }
+
+        function updateConnectionStatus(connected) {
+            const statusEl = document.getElementById('connectionStatus');
+            if (connected) {
+                statusEl.className = 'connection-status connected';
+                statusEl.textContent = 'Connected';
+            } else {
+                statusEl.className = 'connection-status disconnected';
+                statusEl.textContent = 'Disconnected';
+            }
+        }
+
+        async function loadServers() {
+            if (!backendUrl) return;
+
+            try {
+                const res = await fetch(`${backendUrl}/latestservers`, {
+                    headers: {
+                        'ngrok-skip-browser-warning': '69420'
+                    }
+                });
+                
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                
+                const data = await res.json();
+                servers = data.servers || [];
+                updateServersList();
+                updateServerSelects();
+                updateConnectionStatus(true);
+            } catch (err) {
+                console.error('Failed to load servers:', err);
+                updateConnectionStatus(false);
+            }
+        }
+
+        function updateServersList() {
+            const container = document.getElementById('serversList');
+            
+            if (servers.length === 0) {
+                container.innerHTML = '<div class="no-servers">No active servers</div>';
+                return;
+            }
+
+            container.innerHTML = servers.map(server => `
+                <div class="server-item">
+                    <div class="server-info">
+                        <div class="server-name">${server.serverId} - ${server.name}</div>
+                        <div class="server-details">Place ${server.placeId} • JobId ${server.jobId.substring(0, 16)}...</div>
+                    </div>
+                    <div class="server-players">${server.players} players</div>
+                </div>
+            `).join('');
+        }
+
+        function updateServerSelects() {
+            const hintSelect = document.getElementById('hintServer');
+            const runSelect = document.getElementById('runServer');
+            
+            const options = servers.map(s => 
+                `<option value="${s.serverId}">${s.serverId} - ${s.name} (${s.players} players)</option>`
+            ).join('');
+
+            const placeholder = '<option value="">Select server...</option>';
+            hintSelect.innerHTML = placeholder + options;
+            runSelect.innerHTML = placeholder + options;
+        }
+
+        function showStatus(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            const className = isError ? 'status-error' : 'status-success';
+            element.innerHTML = `<div class="status-message ${className}">${message}</div>`;
+            setTimeout(() => {
+                element.innerHTML = '';
+            }, 5000);
+        }
+
+        async function sendHint(e) {
+            e.preventDefault();
+            
+            if (!backendUrl) {
+                showStatus('hintStatus', 'Configure backend URL first', true);
+                return;
+            }
+            
+            const data = {
+                serverId: document.getElementById('hintServer').value,
+                message: document.getElementById('hintMessage').value,
+                typeSpeed: parseFloat(document.getElementById('typeSpeed').value),
+                displayTime: parseFloat(document.getElementById('displayTime').value)
+            };
+
+            try {
+                const res = await fetch(`${backendUrl}/api/hint`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': '69420'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+                
+                if (result.success) {
+                    showStatus('hintStatus', `Hint #${result.hintNum} sent to ${result.serverId}`);
+                    document.getElementById('hintMessage').value = '';
+                } else {
+                    showStatus('hintStatus', result.error, true);
+                }
+            } catch (err) {
+                showStatus('hintStatus', `Failed: ${err.message}`, true);
+            }
+        }
+
+        async function runCode(e) {
+            e.preventDefault();
+            
+            if (!backendUrl) {
+                showStatus('runStatus', 'Configure backend URL first', true);
+                return;
+            }
+            
+            const data = {
+                serverId: document.getElementById('runServer').value,
+                code: document.getElementById('runCode').value
+            };
+
+            try {
+                const res = await fetch(`${backendUrl}/api/run`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'ngrok-skip-browser-warning': '69420'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+                
+                if (result.success) {
+                    showStatus('runStatus', `Code #${result.runNum} queued on ${result.serverId}`);
+                    document.getElementById('runCode').value = '';
+                } else {
+                    showStatus('runStatus', result.error, true);
+                }
+            } catch (err) {
+                showStatus('runStatus', `Failed: ${err.message}`, true);
+            }
+        }
+    </script>
+</body>
+</html>
