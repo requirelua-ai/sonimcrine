@@ -8,12 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin:0; padding:0; box-sizing:border-box; }
         :root {
             --bg: #0d0d0d;
             --bg-lighter: #1a1a1a;
@@ -24,7 +19,6 @@
             --text-dim: #888;
             --border: #222;
         }
-
         body {
             font-family: 'IBM Plex Mono', monospace;
             background: var(--bg);
@@ -32,342 +26,129 @@
             min-height: 100vh;
             line-height: 1.6;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        header {
-            margin-bottom: 50px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 20px;
-        }
-
-        h1 {
-            font-size: 2rem;
-            font-weight: 500;
-            color: var(--green);
-            margin-bottom: 8px;
-        }
-
-        .subtitle {
-            font-size: 0.9rem;
-            color: var(--text-dim);
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            border-bottom: 1px solid var(--border);
-        }
-
+        .container { max-width:1200px; margin:0 auto; padding:40px 20px; }
+        header { margin-bottom:50px; border-bottom:1px solid var(--border); padding-bottom:20px; }
+        h1 { font-size:2rem; font-weight:500; color:var(--green); margin-bottom:8px; }
+        .subtitle { font-size:0.9rem; color:var(--text-dim); }
+        .tabs { display:flex; gap:10px; margin-bottom:30px; border-bottom:1px solid var(--border); }
         .tab {
-            padding: 12px 24px;
-            background: transparent;
-            border: none;
-            color: var(--text-dim);
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-bottom: 2px solid transparent;
+            padding:12px 24px;
+            background:transparent;
+            border:none;
+            color:var(--text-dim);
+            font-family:'IBM Plex Mono',monospace;
+            font-size:0.9rem;
+            font-weight:500;
+            cursor:pointer;
+            transition:all 0.2s;
+            border-bottom:2px solid transparent;
         }
-
-        .tab:hover {
-            color: var(--text);
-        }
-
-        .tab.active {
-            color: var(--green);
-            border-bottom-color: var(--green);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
+        .tab:hover { color:var(--text); }
+        .tab.active { color:var(--green); border-bottom-color:var(--green); }
+        .tab-content { display:none; }
+        .tab-content.active { display:block; }
         .config-section {
-            background: var(--bg-lighter);
-            border: 1px solid var(--green-darker);
-            padding: 24px;
-            margin-bottom: 30px;
+            background:var(--bg-lighter);
+            border:1px solid var(--green-darker);
+            padding:24px;
+            margin-bottom:30px;
         }
-
-        .config-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .config-header h3 {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--green);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 1024px) {
-            .grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .card {
-            background: var(--bg-lighter);
-            border: 1px solid var(--border);
-            padding: 24px;
-        }
-
-        .card h2 {
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: var(--green);
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 0.85rem;
-            color: var(--text-dim);
-            font-weight: 500;
-        }
-
+        .config-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+        .config-header h3 { font-size:1rem; font-weight:500; color:var(--green); }
+        .grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px; }
+        @media (max-width:1024px) { .grid { grid-template-columns:1fr; } }
+        .card { background:var(--bg-lighter); border:1px solid var(--border); padding:24px; }
+        .card h2 { font-size:1.1rem; font-weight:500; color:var(--green); margin-bottom:20px; }
+        .form-group { margin-bottom:18px; }
+        label { display:block; margin-bottom:6px; font-size:0.85rem; color:var(--text-dim); font-weight:500; }
         input, textarea, select {
-            width: 100%;
-            padding: 10px 12px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            color: var(--text);
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            transition: border-color 0.2s;
+            width:100%;
+            padding:10px 12px;
+            background:var(--bg);
+            border:1px solid var(--border);
+            color:var(--text);
+            font-family:'IBM Plex Mono',monospace;
+            font-size:0.9rem;
+            transition:border-color 0.2s;
         }
-
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: var(--green-darker);
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .number-input-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
+        input:focus, textarea:focus, select:focus { outline:none; border-color:var(--green-darker); }
+        textarea { resize:vertical; min-height:100px; }
+        .number-input-group { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
         button {
-            width: 100%;
-            padding: 12px;
-            background: var(--green);
-            border: none;
-            color: var(--bg);
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
+            width:100%;
+            padding:12px;
+            background:var(--green);
+            border:none;
+            color:var(--bg);
+            font-family:'IBM Plex Mono',monospace;
+            font-size:0.9rem;
+            font-weight:600;
+            cursor:pointer;
+            transition:background 0.2s;
         }
-
-        button:hover {
-            background: var(--green-dim);
-        }
-
-        button:active {
-            background: var(--green-darker);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .servers-grid {
-            display: grid;
-            gap: 10px;
-        }
-
+        button:hover { background:var(--green-dim); }
+        button:active { background:var(--green-darker); }
+        button:disabled { opacity:0.5; cursor:not-allowed; }
+        .servers-grid { display:grid; gap:10px; }
         .server-item {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            padding: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: border-color 0.2s;
+            background:var(--bg);
+            border:1px solid var(--border);
+            padding:14px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            transition:border-color 0.2s;
         }
-
-        .server-item:hover {
-            border-color: var(--green-darker);
-        }
-
-        .server-info {
-            flex: 1;
-        }
-
-        .server-name {
-            font-weight: 500;
-            color: var(--green);
-            font-size: 0.95rem;
-            margin-bottom: 4px;
-        }
-
-        .server-details {
-            font-size: 0.8rem;
-            color: var(--text-dim);
-        }
-
+        .server-item:hover { border-color:var(--green-darker); }
+        .server-info { flex:1; }
+        .server-name { font-weight:500; color:var(--green); font-size:0.95rem; margin-bottom:4px; }
+        .server-details { font-size:0.8rem; color:var(--text-dim); }
         .server-players {
-            background: var(--green);
-            color: var(--bg);
-            padding: 4px 10px;
-            font-size: 0.85rem;
-            font-weight: 600;
+            background:var(--green);
+            color:var(--bg);
+            padding:4px 10px;
+            font-size:0.85rem;
+            font-weight:600;
         }
+        .no-servers { text-align:center; padding:30px; color:var(--text-dim); }
+        .status-message { margin-top:14px; padding:10px 12px; font-size:0.85rem; border:1px solid; }
+        .status-success { background:rgba(0,255,65,0.1); border-color:var(--green-darker); color:var(--green); }
+        .status-error { background:rgba(255,0,0,0.1); border-color:#8b0000; color:#ff4444; }
+        .full-width { grid-column:1 / -1; }
+        .connection-status { font-size:0.85rem; font-weight:500; padding:4px 10px; border:1px solid; }
+        .connected { background:rgba(0,255,65,0.1); color:var(--green); border-color:var(--green-darker); }
+        .disconnected { background:rgba(255,0,0,0.1); color:#ff4444; border-color:#8b0000; }
 
-        .no-servers {
-            text-align: center;
-            padding: 30px;
-            color: var(--text-dim);
+        .terminal {
+            background:#0a0a0a;
+            border:1px solid #222;
+            padding:16px;
+            min-height:320px;
+            max-height:520px;
+            overflow-y:auto;
+            font-size:0.95rem;
+            line-height:1.45;
+            margin-bottom:16px;
+            white-space:pre-wrap;
+            word-break:break-word;
+            border-radius:4px;
         }
-
-        .status-message {
-            margin-top: 14px;
-            padding: 10px 12px;
-            font-size: 0.85rem;
-            border: 1px solid;
+        .terminal-line { margin-bottom:3px; }
+        .prompt { color:var(--green); margin-right:8px; user-select:none; }
+        .command-input {
+            flex:1;
+            background:transparent;
+            border:none;
+            color:var(--text);
+            font-family:'IBM Plex Mono',monospace;
+            font-size:0.95rem;
+            outline:none;
         }
-
-        .status-success {
-            background: rgba(0, 255, 65, 0.1);
-            border-color: var(--green-darker);
-            color: var(--green);
-        }
-
-        .status-error {
-            background: rgba(255, 0, 0, 0.1);
-            border-color: #8b0000;
-            color: #ff4444;
-        }
-
-        .full-width {
-            grid-column: 1 / -1;
-        }
-
-        .connection-status {
-            font-size: 0.85rem;
-            font-weight: 500;
-            padding: 4px 10px;
-            border: 1px solid;
-        }
-
-        .connected {
-            background: rgba(0, 255, 65, 0.1);
-            color: var(--green);
-            border-color: var(--green-darker);
-        }
-
-        .disconnected {
-            background: rgba(255, 0, 0, 0.1);
-            color: #ff4444;
-            border-color: #8b0000;
-        }
-
-        /* Players specific styles */
-        .players-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .player-card {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: border-color 0.2s;
-        }
-
-        .player-card:hover {
-            border-color: var(--green-darker);
-        }
-
-        .player-headshot {
-            width: 100px;
-            height: 100px;
-            border: 2px solid var(--border);
-            margin-bottom: 12px;
-            background: var(--bg-lighter);
-        }
-
-        .player-name {
-            font-weight: 500;
-            color: var(--green);
-            font-size: 0.9rem;
-            text-align: center;
-            word-break: break-word;
-            margin-bottom: 4px;
-        }
-
-        .player-id {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            margin-bottom: 8px;
-        }
-
-        .player-server {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            background: var(--bg-lighter);
-            padding: 4px 8px;
-            border: 1px solid var(--border);
-        }
-
-        .server-selector {
-            margin-bottom: 20px;
-        }
-
-        .server-selector select {
-            width: auto;
-            min-width: 300px;
-        }
-
-        .players-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .player-count {
-            font-size: 0.85rem;
-            color: var(--text-dim);
-        }
+        .error { color:#ff5555; }
+        .success { color:var(--green); }
+        .info { color:#55aaff; }
+        .input-line { display:flex; align-items:center; }
+        .player-list { margin:8px 0; padding-left:20px; color:#aaa; }
     </style>
 </head>
 <body>
@@ -377,7 +158,6 @@
             <p class="subtitle">Remote admin</p>
         </header>
 
-        <!-- Configuration Section -->
         <div class="config-section">
             <div class="config-header">
                 <h3>Backend Configuration</h3>
@@ -385,30 +165,25 @@
             </div>
             <div class="form-group">
                 <label for="backendUrl">Backend URL</label>
-                <input type="text" id="backendUrl" placeholder="E" value="">
+                <input type="text" id="backendUrl" placeholder="https://your-ngrok-url.ngrok-free.app" value="">
             </div>
             <button onclick="testConnection()">Connect</button>
             <div id="configStatus"></div>
         </div>
 
-        <!-- Tabs -->
         <div class="tabs">
             <button class="tab active" onclick="switchTab('admin')">Admin</button>
-            <button class="tab" onclick="switchTab('players')">Players</button>
+            <button class="tab" onclick="switchTab('console')">Console</button>
         </div>
 
-        <!-- Admin Tab -->
         <div id="adminTab" class="tab-content active">
             <div class="grid">
-                <!-- Send Hint Card -->
                 <div class="card">
                     <h2>Send Hint</h2>
                     <form id="hintForm" onsubmit="sendHint(event)">
                         <div class="form-group">
                             <label for="hintServer">Server</label>
-                            <select id="hintServer" required>
-                                <option value="">Select server...</option>
-                            </select>
+                            <select id="hintServer" required><option value="">Select server...</option></select>
                         </div>
                         <div class="form-group">
                             <label for="hintMessage">Message</label>
@@ -429,26 +204,22 @@
                     <div id="hintStatus"></div>
                 </div>
 
-                <!-- Execute Code Card -->
                 <div class="card">
                     <h2>Execute Code</h2>
                     <form id="runForm" onsubmit="runCode(event)">
                         <div class="form-group">
                             <label for="runServer">Server</label>
-                            <select id="runServer" required>
-                                <option value="">Select server...</option>
-                            </select>
+                            <select id="runServer" required><option value="">Select server...</option></select>
                         </div>
                         <div class="form-group">
                             <label for="runCode">Luau Code</label>
-                            <textarea id="runCode" placeholder="print('Hello World')" required></textarea>
+                            <textarea id="runCode" placeholder="print('Hello from proxy')" required></textarea>
                         </div>
                         <button type="submit">Execute</button>
                     </form>
                     <div id="runStatus"></div>
                 </div>
 
-                <!-- Active Servers Card -->
                 <div class="card full-width">
                     <h2>Active Servers</h2>
                     <div id="serversList" class="servers-grid">
@@ -458,23 +229,17 @@
             </div>
         </div>
 
-        <!-- Players Tab -->
-        <div id="playersTab" class="tab-content">
+        <div id="consoleTab" class="tab-content">
             <div class="card">
-                <div class="players-header">
-                    <h2>Players</h2>
-                    <span id="playerCount" class="player-count">0 players</span>
+                <h2>Console</h2>
+                <div class="terminal" id="terminalOutput">
+                    <div class="terminal-line info">Console ready — type <span style="color:var(--green)">cmds</span> for help</div>
+                    <div class="terminal-line"></div>
                 </div>
-                <div class="server-selector">
-                    <div class="form-group">
-                        <label for="playerServerSelect">Select Server</label>
-                        <select id="playerServerSelect" onchange="loadPlayers()">
-                            <option value="">Select server...</option>
-                        </select>
-                    </div>
-                </div>
-                <div id="playersGrid" class="players-grid">
-                    <div class="no-servers">Select a server to view players</div>
+
+                <div class="input-line">
+                    <span class="prompt">&gt;</span>
+                    <input type="text" id="consoleInput" class="command-input" placeholder="type command..." autocomplete="off" autofocus>
                 </div>
             </div>
         </div>
@@ -484,8 +249,6 @@
         let servers = [];
         let backendUrl = localStorage.getItem('backendUrl') || '';
         let refreshInterval;
-        let playersRefreshInterval;
-        let currentTab = 'admin';
 
         window.addEventListener('DOMContentLoaded', () => {
             if (backendUrl) {
@@ -495,36 +258,11 @@
         });
 
         function switchTab(tabName) {
-            currentTab = tabName;
-            
-            // Update tab buttons
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
-            
-            // Update tab content
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.getElementById(tabName + 'Tab').classList.add('active');
-            
-            // Handle players tab specific logic
-            if (tabName === 'players') {
-                updatePlayerServerSelect();
-                if (playersRefreshInterval) clearInterval(playersRefreshInterval);
-                playersRefreshInterval = setInterval(() => {
-                    const selectedServer = document.getElementById('playerServerSelect').value;
-                    if (selectedServer) {
-                        loadPlayers();
-                    }
-                }, 5000);
-            } else {
-                if (playersRefreshInterval) {
-                    clearInterval(playersRefreshInterval);
-                    playersRefreshInterval = null;
-                }
-            }
+            if (tabName === 'console') document.getElementById('consoleInput').focus();
         }
 
         function getBackendUrl() {
@@ -539,251 +277,274 @@
         async function testConnection() {
             const url = getBackendUrl();
             if (!url) return;
-
             localStorage.setItem('backendUrl', url);
             backendUrl = url;
-
             showStatus('configStatus', 'Testing connection...', false);
-
             try {
                 const res = await fetch(`${url}/latestservers`, {
-                    headers: {
-                        'ngrok-skip-browser-warning': '69420'
-                    }
+                    headers: { 'ngrok-skip-browser-warning': '69420' }
                 });
-                
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                
                 const data = await res.json();
-                
-                showStatus('configStatus', `Connected - found ${data.count} server(s)`, false);
+                showStatus('configStatus', `Connected — ${data.count || data.servers?.length || 0} server(s)`, false);
                 updateConnectionStatus(true);
-                
                 loadServers();
                 if (refreshInterval) clearInterval(refreshInterval);
                 refreshInterval = setInterval(loadServers, 5000);
-                
             } catch (err) {
                 showStatus('configStatus', `Connection failed: ${err.message}`, true);
                 updateConnectionStatus(false);
-                console.error('Connection error:', err);
             }
         }
 
         function updateConnectionStatus(connected) {
-            const statusEl = document.getElementById('connectionStatus');
-            if (connected) {
-                statusEl.className = 'connection-status connected';
-                statusEl.textContent = 'Connected';
-            } else {
-                statusEl.className = 'connection-status disconnected';
-                statusEl.textContent = 'Disconnected';
-            }
+            const el = document.getElementById('connectionStatus');
+            el.className = 'connection-status ' + (connected ? 'connected' : 'disconnected');
+            el.textContent = connected ? 'Connected' : 'Disconnected';
         }
 
         async function loadServers() {
             if (!backendUrl) return;
-
             try {
                 const res = await fetch(`${backendUrl}/latestservers`, {
-                    headers: {
-                        'ngrok-skip-browser-warning': '69420'
-                    }
+                    headers: { 'ngrok-skip-browser-warning': '69420' }
                 });
-                
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                
                 const data = await res.json();
                 servers = data.servers || [];
                 updateServersList();
                 updateServerSelects();
-                updatePlayerServerSelect();
                 updateConnectionStatus(true);
             } catch (err) {
-                console.error('Failed to load servers:', err);
+                console.error(err);
                 updateConnectionStatus(false);
             }
         }
 
         function updateServersList() {
             const container = document.getElementById('serversList');
-            
             if (servers.length === 0) {
                 container.innerHTML = '<div class="no-servers">No active servers</div>';
                 return;
             }
-
-            container.innerHTML = servers.map(server => `
+            container.innerHTML = servers.map(s => `
                 <div class="server-item">
                     <div class="server-info">
-                        <div class="server-name">${server.serverId} - ${server.name}</div>
-                        <div class="server-details">Place ${server.placeId} • JobId ${server.jobId.substring(0, 16)}...</div>
+                        <div class="server-name">${s.serverId} - ${s.name || 'Unnamed'}</div>
+                        <div class="server-details">Place ${s.placeId} • Job ${s.jobId?.substring(0,16)||'?'}...</div>
                     </div>
-                    <div class="server-players">${server.players} players</div>
+                    <div class="server-players">${s.players||0} players</div>
                 </div>
             `).join('');
         }
 
         function updateServerSelects() {
-            const hintSelect = document.getElementById('hintServer');
-            const runSelect = document.getElementById('runServer');
-            
-            const options = servers.map(s => 
-                `<option value="${s.serverId}">${s.serverId} - ${s.name} (${s.players} players)</option>`
+            const hint = document.getElementById('hintServer');
+            const run = document.getElementById('runServer');
+            const opts = servers.map(s => 
+                `<option value="${s.serverId}">${s.serverId} - ${s.name||'?'} (${s.players||0})</option>`
             ).join('');
-
-            const placeholder = '<option value="">Select server...</option>';
-            hintSelect.innerHTML = placeholder + options;
-            runSelect.innerHTML = placeholder + options;
+            const ph = '<option value="">Select server...</option>';
+            hint.innerHTML = ph + opts;
+            run.innerHTML = ph + opts;
         }
 
-        function updatePlayerServerSelect() {
-            const select = document.getElementById('playerServerSelect');
-            const currentValue = select.value;
-            
-            const options = servers.map(s => 
-                `<option value="${s.serverId}">${s.serverId} - ${s.name} (${s.players} players)</option>`
-            ).join('');
-
-            const placeholder = '<option value="">Select server...</option>';
-            select.innerHTML = placeholder + options;
-            
-            // Restore selection if still valid
-            if (currentValue && servers.find(s => s.serverId === currentValue)) {
-                select.value = currentValue;
-            }
-        }
-
-        async function loadPlayers() {
-            const serverId = document.getElementById('playerServerSelect').value;
-            const container = document.getElementById('playersGrid');
-            const countEl = document.getElementById('playerCount');
-            
-            if (!serverId) {
-                container.innerHTML = '<div class="no-servers">Select a server to view players</div>';
-                countEl.textContent = '0 players';
-                return;
-            }
-
-            try {
-                const res = await fetch(`${backendUrl}/api/players/${serverId}`, {
-                    headers: {
-                        'ngrok-skip-browser-warning': '69420'
-                    }
-                });
-                
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                
-                const data = await res.json();
-                const players = data.players || [];
-                
-                countEl.textContent = `${players.length} player${players.length !== 1 ? 's' : ''}`;
-                
-                if (players.length === 0) {
-                    container.innerHTML = '<div class="no-servers">No players in this server</div>';
-                    return;
-                }
-
-                container.innerHTML = players.map(player => `
-                    <div class="player-card">
-                        <img class="player-headshot" 
-                             src="${player.headshot}" 
-                             alt="${player.name}"
-                             onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%231a1a1a%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22%23888%22 font-family=%22monospace%22 font-size=%2212%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22>No Image</text></svg>'">
-                        <div class="player-name">${player.name}</div>
-                        <div class="player-id">ID: ${player.userId}</div>
-                        <div class="player-server">${serverId}</div>
-                    </div>
-                `).join('');
-                
-            } catch (err) {
-                console.error('Failed to load players:', err);
-                container.innerHTML = `<div class="no-servers">Failed to load players: ${err.message}</div>`;
-            }
-        }
-
-        function showStatus(elementId, message, isError = false) {
-            const element = document.getElementById(elementId);
-            const className = isError ? 'status-error' : 'status-success';
-            element.innerHTML = `<div class="status-message ${className}">${message}</div>`;
-            setTimeout(() => {
-                element.innerHTML = '';
-            }, 5000);
+        function showStatus(id, msg, isError = false) {
+            const el = document.getElementById(id);
+            const cls = isError ? 'status-error' : 'status-success';
+            el.innerHTML = `<div class="status-message ${cls}">${msg}</div>`;
+            setTimeout(() => el.innerHTML = '', 6000);
         }
 
         async function sendHint(e) {
             e.preventDefault();
-            
-            if (!backendUrl) {
-                showStatus('hintStatus', 'Configure backend URL first', true);
-                return;
-            }
-            
+            if (!backendUrl) return showStatus('hintStatus', 'Configure backend first', true);
             const data = {
                 serverId: document.getElementById('hintServer').value,
-                message: document.getElementById('hintMessage').value,
+                message: document.getElementById('hintMessage').value.trim(),
                 typeSpeed: parseFloat(document.getElementById('typeSpeed').value),
                 displayTime: parseFloat(document.getElementById('displayTime').value)
             };
-
+            if (!data.message) return showStatus('hintStatus', 'Message cannot be empty', true);
             try {
                 const res = await fetch(`${backendUrl}/api/hint`, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'ngrok-skip-browser-warning': '69420'
-                    },
+                    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': '69420' },
                     body: JSON.stringify(data)
                 });
-
-                const result = await res.json();
-                
-                if (result.success) {
-                    showStatus('hintStatus', `Hint #${result.hintNum} sent to ${result.serverId}`);
+                const r = await res.json();
+                if (r.success) {
+                    showStatus('hintStatus', `Hint #${r.hintNum || '?'} queued`, false);
                     document.getElementById('hintMessage').value = '';
                 } else {
-                    showStatus('hintStatus', result.error, true);
+                    showStatus('hintStatus', r.error || 'Request failed', true);
                 }
             } catch (err) {
-                showStatus('hintStatus', `Failed: ${err.message}`, true);
+                showStatus('hintStatus', err.message, true);
             }
         }
 
         async function runCode(e) {
             e.preventDefault();
-            
-            if (!backendUrl) {
-                showStatus('runStatus', 'Configure backend URL first', true);
-                return;
-            }
-            
+            if (!backendUrl) return showStatus('runStatus', 'Configure backend first', true);
             const data = {
                 serverId: document.getElementById('runServer').value,
-                code: document.getElementById('runCode').value
+                code: document.getElementById('runCode').value.trim()
             };
-
+            if (!data.code) return showStatus('runStatus', 'Code cannot be empty', true);
             try {
                 const res = await fetch(`${backendUrl}/api/run`, {
                     method: 'POST',
-                    headers: { 
+                    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': '69420' },
+                    body: JSON.stringify(data)
+                });
+                const r = await res.json();
+                if (r.success) {
+                    showStatus('runStatus', `Code #${r.runNum || '?'} queued`, false);
+                    document.getElementById('runCode').value = '';
+                } else {
+                    showStatus('runStatus', r.error || 'Request failed', true);
+                }
+            } catch (err) {
+                showStatus('runStatus', err.message, true);
+            }
+        }
+
+        // ────────────────────────────── CONSOLE ──────────────────────────────
+        const terminal = document.getElementById('terminalOutput');
+        const cmdInput = document.getElementById('consoleInput');
+
+        function addLine(text, className = '') {
+            const div = document.createElement('div');
+            div.className = 'terminal-line ' + className;
+            div.textContent = text;
+            terminal.appendChild(div);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function addPlayerList(players) {
+            if (!players || players.length === 0) {
+                addLine("  (no players online)", "info");
+                return;
+            }
+            addLine(`  ${players.length} player${players.length === 1 ? '' : 's'}:`, "info");
+            players.forEach(p => {
+                addLine(`    • ${p.name}  (ID: ${p.userId})`, "player-list");
+            });
+        }
+
+        async function fetchPlayers(serverId) {
+            if (!backendUrl) {
+                addLine("Backend not connected", "error");
+                return;
+            }
+            try {
+                const res = await fetch(`${backendUrl}/api/players/${serverId}`, {
+                    headers: { 'ngrok-skip-browser-warning': '69420' }
+                });
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+                const data = await res.json();
+                if (!data.success) {
+                    addLine(`Error: ${data.error || "Failed to load players"}`, "error");
+                    return;
+                }
+                addPlayerList(data.players);
+            } catch (err) {
+                addLine(`Failed to fetch players: ${err.message}`, "error");
+            }
+        }
+
+        async function sendModCommand(type, serverId, playerName, reason) {
+            if (!backendUrl) {
+                addLine("Backend not connected", "error");
+                return;
+            }
+            try {
+                const res = await fetch(`${backendUrl}/api/${type}`, {
+                    method: 'POST',
+                    headers: {
                         'Content-Type': 'application/json',
                         'ngrok-skip-browser-warning': '69420'
                     },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify({ serverId, playerName, reason })
                 });
-
-                const result = await res.json();
-                
-                if (result.success) {
-                    showStatus('runStatus', `Code #${result.runNum} queued on ${result.serverId}`);
-                    document.getElementById('runCode').value = '';
+                const data = await res.json();
+                if (data.success) {
+                    addLine(`[${type.toUpperCase()}] #${data.modNum || '?'} queued → "${playerName}" on ${serverId}`, "success");
+                    if (reason && reason !== "No reason provided") {
+                        addLine(`  Reason: ${reason}`, "info");
+                    }
                 } else {
-                    showStatus('runStatus', result.error, true);
+                    addLine(`Error: ${data.error || "Request failed"}`, "error");
                 }
             } catch (err) {
-                showStatus('runStatus', `Failed: ${err.message}`, true);
+                addLine(`Network error: ${err.message}`, "error");
             }
         }
+
+        function handleCommand(raw) {
+            const cmd = raw.trim();
+            if (!cmd) return;
+            addLine('> ' + cmd);
+
+            const parts = cmd.split(/\s+/);
+            const action = parts[0].toLowerCase();
+            const args = parts.slice(1);
+
+            switch (action) {
+                case 'cmds':
+                case 'help':
+                    addLine('Available commands:', 'info');
+                    addLine('  plrs <serverId>                        → list players in server', 'info');
+                    addLine('  kick <serverId> <playername> [reason]  → kick player', 'info');
+                    addLine('  ban  <serverId> <playername> [reason]  → ban (kick + note)', 'info');
+                    addLine('  kill <serverId> <playername>           → kill player', 'info');
+                    addLine('  cmds / help                            → this list', 'info');
+                    addLine('');
+                    break;
+
+                case 'plrs':
+                    if (args.length !== 1) {
+                        addLine("Usage: plrs <serverId>", 'error');
+                        addLine("Example: plrs server1", 'info');
+                        return;
+                    }
+                    const serverId = args[0];
+                    addLine(`Fetching players on ${serverId}...`, 'info');
+                    fetchPlayers(serverId);
+                    break;
+
+                case 'kick':
+                case 'ban':
+                case 'kill':
+                    if (args.length < 2) {
+                        addLine(`Usage: ${action} <serverId> <playername> [reason]`, 'error');
+                        return;
+                    }
+                    const modServerId = args[0];
+                    const playerName = args[1];
+                    const reason = args.slice(2).join(' ') || 'No reason provided';
+                    sendModCommand(action, modServerId, playerName, reason);
+                    break;
+
+                default:
+                    addLine(`Unknown command: ${action}`, 'error');
+                    addLine("Type 'cmds' for help", 'info');
+            }
+        }
+
+        cmdInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const val = cmdInput.value;
+                if (val.trim()) handleCommand(val);
+                cmdInput.value = '';
+            }
+        });
+
+        terminal.addEventListener('click', () => cmdInput.focus());
     </script>
 </body>
 </html>
