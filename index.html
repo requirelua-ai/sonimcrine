@@ -25,7 +25,78 @@
             color: var(--text);
             min-height: 100vh;
             line-height: 1.6;
+            display: flex;
         }
+        
+        /* Spinner Sidebar */
+        .spinner-sidebar {
+            width: 120px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: var(--bg-lighter);
+            border-right: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .spinner {
+            width: 70.4px;
+            height: 70.4px;
+            --clr: var(--green);
+            --clr-alpha: rgba(0, 255, 65, 0.1);
+            animation: spinner 1.6s infinite ease;
+            transform-style: preserve-3d;
+        }
+        .spinner > div {
+            background-color: var(--clr-alpha);
+            height: 100%;
+            position: absolute;
+            width: 100%;
+            border: 3.5px solid var(--clr);
+        }
+        .spinner div:nth-of-type(1) {
+            transform: translateZ(-35.2px) rotateY(180deg);
+        }
+        .spinner div:nth-of-type(2) {
+            transform: rotateY(-270deg) translateX(50%);
+            transform-origin: top right;
+        }
+        .spinner div:nth-of-type(3) {
+            transform: rotateY(270deg) translateX(-50%);
+            transform-origin: center left;
+        }
+        .spinner div:nth-of-type(4) {
+            transform: rotateX(90deg) translateY(-50%);
+            transform-origin: top center;
+        }
+        .spinner div:nth-of-type(5) {
+            transform: rotateX(-90deg) translateY(50%);
+            transform-origin: bottom center;
+        }
+        .spinner div:nth-of-type(6) {
+            transform: translateZ(35.2px);
+        }
+        @keyframes spinner {
+            0% {
+                transform: rotate(45deg) rotateX(-25deg) rotateY(25deg);
+            }
+            50% {
+                transform: rotate(45deg) rotateX(-385deg) rotateY(25deg);
+            }
+            100% {
+                transform: rotate(45deg) rotateX(-385deg) rotateY(385deg);
+            }
+        }
+        
+        .main-content {
+            margin-left: 120px;
+            flex: 1;
+        }
+        
         .container { max-width:1200px; margin:0 auto; padding:40px 20px; }
         header { margin-bottom:50px; border-bottom:1px solid var(--border); padding-bottom:20px; }
         h1 { font-size:2rem; font-weight:500; color:var(--green); margin-bottom:8px; }
@@ -85,10 +156,29 @@
             font-weight:600;
             cursor:pointer;
             transition:background 0.2s;
+            position: relative;
         }
         button:hover { background:var(--green-dim); }
         button:active { background:var(--green-darker); }
-        button:disabled { opacity:0.5; cursor:not-allowed; }
+        button:disabled { 
+            opacity:0.5; 
+            cursor:not-allowed;
+            background:var(--text-dim);
+        }
+        .cooldown-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            color: var(--text);
+            pointer-events: none;
+        }
         .servers-grid { display:grid; gap:10px; }
         .server-item {
             background:var(--bg);
@@ -149,97 +239,123 @@
         .info { color:#55aaff; }
         .input-line { display:flex; align-items:center; }
         .player-list { margin:8px 0; padding-left:20px; color:#aaa; }
+        
+        @media (max-width: 768px) {
+            .spinner-sidebar {
+                width: 80px;
+            }
+            .main-content {
+                margin-left: 80px;
+            }
+            .spinner {
+                width: 50px;
+                height: 50px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Holy Proxy</h1>
-            <p class="subtitle">Remote admin</p>
-        </header>
-
-        <div class="config-section">
-            <div class="config-header">
-                <h3>Backend Configuration</h3>
-                <span id="connectionStatus" class="connection-status disconnected">Disconnected</span>
-            </div>
-            <div class="form-group">
-                <label for="backendUrl">Backend URL</label>
-                <input type="text" id="backendUrl" placeholder="https://your-ngrok-url.ngrok-free.app" value="">
-            </div>
-            <button onclick="testConnection()">Connect</button>
-            <div id="configStatus"></div>
+    <div class="spinner-sidebar">
+        <div class="spinner">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
         </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="container">
+            <header>
+                <h1>Holy Proxy</h1>
+                <p class="subtitle">Remote admin</p>
+            </header>
 
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('admin')">Admin</button>
-            <button class="tab" onclick="switchTab('console')">Console</button>
-        </div>
+            <div class="config-section">
+                <div class="config-header">
+                    <h3>Backend Configuration</h3>
+                    <span id="connectionStatus" class="connection-status disconnected">Disconnected</span>
+                </div>
+                <div class="form-group">
+                    <label for="backendUrl">Backend URL</label>
+                    <input type="text" id="backendUrl" placeholder="https://your-ngrok-url.ngrok-free.app" value="">
+                </div>
+                <button onclick="testConnection()">Connect</button>
+                <div id="configStatus"></div>
+            </div>
 
-        <div id="adminTab" class="tab-content active">
-            <div class="grid">
-                <div class="card">
-                    <h2>Send Hint</h2>
-                    <form id="hintForm" onsubmit="sendHint(event)">
-                        <div class="form-group">
-                            <label for="hintServer">Server</label>
-                            <select id="hintServer" required><option value="">Select server...</option></select>
-                        </div>
-                        <div class="form-group">
-                            <label for="hintMessage">Message</label>
-                            <textarea id="hintMessage" placeholder="Enter hint message..." required></textarea>
-                        </div>
-                        <div class="number-input-group">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('admin')">Admin</button>
+                <button class="tab" onclick="switchTab('console')">Console</button>
+            </div>
+
+            <div id="adminTab" class="tab-content active">
+                <div class="grid">
+                    <div class="card">
+                        <h2>Send Hint</h2>
+                        <form id="hintForm" onsubmit="sendHint(event)">
                             <div class="form-group">
-                                <label for="typeSpeed">Type Speed (s)</label>
-                                <input type="number" id="typeSpeed" value="0.05" step="0.01" min="0.01">
+                                <label for="hintServer">Server</label>
+                                <select id="hintServer" required><option value="">Select server...</option></select>
                             </div>
                             <div class="form-group">
-                                <label for="displayTime">Display (s)</label>
-                                <input type="number" id="displayTime" value="3" step="0.5" min="0.5">
+                                <label for="hintMessage">Message</label>
+                                <textarea id="hintMessage" placeholder="Enter hint message..." required></textarea>
                             </div>
-                        </div>
-                        <button type="submit">Send</button>
-                    </form>
-                    <div id="hintStatus"></div>
-                </div>
+                            <div class="number-input-group">
+                                <div class="form-group">
+                                    <label for="typeSpeed">Type Speed (s)</label>
+                                    <input type="number" id="typeSpeed" value="0.05" step="0.01" min="0.01">
+                                </div>
+                                <div class="form-group">
+                                    <label for="displayTime">Display (s)</label>
+                                    <input type="number" id="displayTime" value="3" step="0.5" min="0.5">
+                                </div>
+                            </div>
+                            <button type="submit" id="hintBtn">Send</button>
+                        </form>
+                        <div id="hintStatus"></div>
+                    </div>
 
-                <div class="card">
-                    <h2>Execute Code</h2>
-                    <form id="runForm" onsubmit="runCode(event)">
-                        <div class="form-group">
-                            <label for="runServer">Server</label>
-                            <select id="runServer" required><option value="">Select server...</option></select>
-                        </div>
-                        <div class="form-group">
-                            <label for="runCode">Luau Code</label>
-                            <textarea id="runCode" placeholder="print('Hello from proxy')" required></textarea>
-                        </div>
-                        <button type="submit">Execute</button>
-                    </form>
-                    <div id="runStatus"></div>
-                </div>
+                    <div class="card">
+                        <h2>Execute Code</h2>
+                        <form id="runForm" onsubmit="runCode(event)">
+                            <div class="form-group">
+                                <label for="runServer">Server</label>
+                                <select id="runServer" required><option value="">Select server...</option></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="runCode">Luau Code</label>
+                                <textarea id="runCode" placeholder="print('Hello from proxy')" required></textarea>
+                            </div>
+                            <button type="submit" id="runBtn">Execute</button>
+                        </form>
+                        <div id="runStatus"></div>
+                    </div>
 
-                <div class="card full-width">
-                    <h2>Active Servers</h2>
-                    <div id="serversList" class="servers-grid">
-                        <div class="no-servers">Configure backend URL to see servers</div>
+                    <div class="card full-width">
+                        <h2>Active Servers</h2>
+                        <div id="serversList" class="servers-grid">
+                            <div class="no-servers">Configure backend URL to see servers</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div id="consoleTab" class="tab-content">
-            <div class="card">
-                <h2>Console</h2>
-                <div class="terminal" id="terminalOutput">
-                    <div class="terminal-line info">Console ready — type <span style="color:var(--green)">cmds</span> for help</div>
-                    <div class="terminal-line"></div>
-                </div>
+            <div id="consoleTab" class="tab-content">
+                <div class="card">
+                    <h2>Console</h2>
+                    <div class="terminal" id="terminalOutput">
+                        <div class="terminal-line info">Console ready — type <span style="color:var(--green)">cmds</span> for help</div>
+                        <div class="terminal-line"></div>
+                    </div>
 
-                <div class="input-line">
-                    <span class="prompt">&gt;</span>
-                    <input type="text" id="consoleInput" class="command-input" placeholder="type command..." autocomplete="off" autofocus>
+                    <div class="input-line">
+                        <span class="prompt">&gt;</span>
+                        <input type="text" id="consoleInput" class="command-input" placeholder="type command..." autocomplete="off" autofocus>
+                    </div>
                 </div>
             </div>
         </div>
@@ -249,6 +365,12 @@
         let servers = [];
         let backendUrl = localStorage.getItem('backendUrl') || '';
         let refreshInterval;
+        
+        // Cooldown management
+        let adminCooldown = false;
+        let consoleCooldown = false;
+        let adminCooldownTimer = null;
+        let consoleCooldownTimer = null;
 
         window.addEventListener('DOMContentLoaded', () => {
             if (backendUrl) {
@@ -356,8 +478,36 @@
             setTimeout(() => el.innerHTML = '', 6000);
         }
 
+        function startAdminCooldown(buttonId, seconds) {
+            adminCooldown = true;
+            const btn = document.getElementById(buttonId);
+            btn.disabled = true;
+            
+            let remaining = seconds;
+            const overlay = document.createElement('div');
+            overlay.className = 'cooldown-overlay';
+            overlay.textContent = `${remaining}s`;
+            btn.appendChild(overlay);
+            
+            const interval = setInterval(() => {
+                remaining--;
+                if (remaining > 0) {
+                    overlay.textContent = `${remaining}s`;
+                } else {
+                    clearInterval(interval);
+                    btn.removeChild(overlay);
+                    btn.disabled = false;
+                    adminCooldown = false;
+                }
+            }, 1000);
+        }
+
         async function sendHint(e) {
             e.preventDefault();
+            if (adminCooldown) {
+                showStatus('hintStatus', 'Please wait for cooldown', true);
+                return;
+            }
             if (!backendUrl) return showStatus('hintStatus', 'Configure backend first', true);
             const data = {
                 serverId: document.getElementById('hintServer').value,
@@ -376,6 +526,7 @@
                 if (r.success) {
                     showStatus('hintStatus', `Hint #${r.hintNum || '?'} queued`, false);
                     document.getElementById('hintMessage').value = '';
+                    startAdminCooldown('hintBtn', 2);
                 } else {
                     showStatus('hintStatus', r.error || 'Request failed', true);
                 }
@@ -386,6 +537,10 @@
 
         async function runCode(e) {
             e.preventDefault();
+            if (adminCooldown) {
+                showStatus('runStatus', 'Please wait for cooldown', true);
+                return;
+            }
             if (!backendUrl) return showStatus('runStatus', 'Configure backend first', true);
             const data = {
                 serverId: document.getElementById('runServer').value,
@@ -402,6 +557,7 @@
                 if (r.success) {
                     showStatus('runStatus', `Code #${r.runNum || '?'} queued`, false);
                     document.getElementById('runCode').value = '';
+                    startAdminCooldown('runBtn', 2);
                 } else {
                     showStatus('runStatus', r.error || 'Request failed', true);
                 }
@@ -484,9 +640,44 @@
             }
         }
 
+        function startConsoleCooldown() {
+            consoleCooldown = true;
+            cmdInput.disabled = true;
+            cmdInput.placeholder = 'Cooldown active...';
+            
+            let remaining = 5;
+            addLine(`⏱ Cooldown: ${remaining}s`, 'info');
+            
+            consoleCooldownTimer = setInterval(() => {
+                remaining--;
+                if (remaining > 0) {
+                    // Update last line
+                    const lines = terminal.querySelectorAll('.terminal-line');
+                    const lastLine = lines[lines.length - 1];
+                    if (lastLine && lastLine.textContent.startsWith('⏱')) {
+                        lastLine.textContent = `⏱ Cooldown: ${remaining}s`;
+                    }
+                } else {
+                    clearInterval(consoleCooldownTimer);
+                    cmdInput.disabled = false;
+                    cmdInput.placeholder = 'type command...';
+                    consoleCooldown = false;
+                    addLine('✓ Ready', 'success');
+                    cmdInput.focus();
+                }
+            }, 1000);
+        }
+
         function handleCommand(raw) {
             const cmd = raw.trim();
             if (!cmd) return;
+            
+            if (consoleCooldown) {
+                addLine('> ' + cmd);
+                addLine('⚠ Command on cooldown, please wait', 'error');
+                return;
+            }
+            
             addLine('> ' + cmd);
 
             const parts = cmd.split(/\s+/);
@@ -503,6 +694,7 @@
                     addLine('  kill <serverId> <playername>           → kill player', 'info');
                     addLine('  cmds / help                            → this list', 'info');
                     addLine('');
+                    startConsoleCooldown();
                     break;
 
                 case 'plrs':
@@ -514,6 +706,7 @@
                     const serverId = args[0];
                     addLine(`Fetching players on ${serverId}...`, 'info');
                     fetchPlayers(serverId);
+                    startConsoleCooldown();
                     break;
 
                 case 'kick':
@@ -527,11 +720,13 @@
                     const playerName = args[1];
                     const reason = args.slice(2).join(' ') || 'No reason provided';
                     sendModCommand(action, modServerId, playerName, reason);
+                    startConsoleCooldown();
                     break;
 
                 default:
                     addLine(`Unknown command: ${action}`, 'error');
                     addLine("Type 'cmds' for help", 'info');
+                    startConsoleCooldown();
             }
         }
 
@@ -544,7 +739,9 @@
             }
         });
 
-        terminal.addEventListener('click', () => cmdInput.focus());
+        terminal.addEventListener('click', () => {
+            if (!consoleCooldown) cmdInput.focus();
+        });
     </script>
 </body>
 </html>
