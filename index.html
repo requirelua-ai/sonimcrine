@@ -57,6 +57,43 @@
             color: var(--text-dim);
         }
 
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab:hover {
+            color: var(--text);
+        }
+
+        .tab.active {
+            color: var(--green);
+            border-bottom-color: var(--green);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
         .config-section {
             background: var(--bg-lighter);
             border: 1px solid var(--green-darker);
@@ -258,13 +295,86 @@
             color: #ff4444;
             border-color: #8b0000;
         }
+
+        /* Players specific styles */
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .player-card {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: border-color 0.2s;
+        }
+
+        .player-card:hover {
+            border-color: var(--green-darker);
+        }
+
+        .player-headshot {
+            width: 100px;
+            height: 100px;
+            border: 2px solid var(--border);
+            margin-bottom: 12px;
+            background: var(--bg-lighter);
+        }
+
+        .player-name {
+            font-weight: 500;
+            color: var(--green);
+            font-size: 0.9rem;
+            text-align: center;
+            word-break: break-word;
+            margin-bottom: 4px;
+        }
+
+        .player-id {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+
+        .player-server {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            background: var(--bg-lighter);
+            padding: 4px 8px;
+            border: 1px solid var(--border);
+        }
+
+        .server-selector {
+            margin-bottom: 20px;
+        }
+
+        .server-selector select {
+            width: auto;
+            min-width: 300px;
+        }
+
+        .players-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .player-count {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>Holy Proxy</h1>
-            <p class="subtitle">Remot admin</p>
+            <p class="subtitle">Remote admin</p>
         </header>
 
         <!-- Configuration Section -->
@@ -275,66 +385,96 @@
             </div>
             <div class="form-group">
                 <label for="backendUrl">Backend URL</label>
-                <input type="text" id="backendUrl" placeholder="https://your-url.ngrok-free.app" value="">
+                <input type="text" id="backendUrl" placeholder="E" value="">
             </div>
             <button onclick="testConnection()">Connect</button>
             <div id="configStatus"></div>
         </div>
 
-        <div class="grid">
-            <!-- Send Hint Card -->
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('admin')">Admin</button>
+            <button class="tab" onclick="switchTab('players')">Players</button>
+        </div>
+
+        <!-- Admin Tab -->
+        <div id="adminTab" class="tab-content active">
+            <div class="grid">
+                <!-- Send Hint Card -->
+                <div class="card">
+                    <h2>Send Hint</h2>
+                    <form id="hintForm" onsubmit="sendHint(event)">
+                        <div class="form-group">
+                            <label for="hintServer">Server</label>
+                            <select id="hintServer" required>
+                                <option value="">Select server...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="hintMessage">Message</label>
+                            <textarea id="hintMessage" placeholder="Enter hint message..." required></textarea>
+                        </div>
+                        <div class="number-input-group">
+                            <div class="form-group">
+                                <label for="typeSpeed">Type Speed (s)</label>
+                                <input type="number" id="typeSpeed" value="0.05" step="0.01" min="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label for="displayTime">Display (s)</label>
+                                <input type="number" id="displayTime" value="3" step="0.5" min="0.5">
+                            </div>
+                        </div>
+                        <button type="submit">Send</button>
+                    </form>
+                    <div id="hintStatus"></div>
+                </div>
+
+                <!-- Execute Code Card -->
+                <div class="card">
+                    <h2>Execute Code</h2>
+                    <form id="runForm" onsubmit="runCode(event)">
+                        <div class="form-group">
+                            <label for="runServer">Server</label>
+                            <select id="runServer" required>
+                                <option value="">Select server...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="runCode">Luau Code</label>
+                            <textarea id="runCode" placeholder="print('Hello World')" required></textarea>
+                        </div>
+                        <button type="submit">Execute</button>
+                    </form>
+                    <div id="runStatus"></div>
+                </div>
+
+                <!-- Active Servers Card -->
+                <div class="card full-width">
+                    <h2>Active Servers</h2>
+                    <div id="serversList" class="servers-grid">
+                        <div class="no-servers">Configure backend URL to see servers</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Players Tab -->
+        <div id="playersTab" class="tab-content">
             <div class="card">
-                <h2>Send Hint</h2>
-                <form id="hintForm" onsubmit="sendHint(event)">
+                <div class="players-header">
+                    <h2>Players</h2>
+                    <span id="playerCount" class="player-count">0 players</span>
+                </div>
+                <div class="server-selector">
                     <div class="form-group">
-                        <label for="hintServer">Server</label>
-                        <select id="hintServer" required>
+                        <label for="playerServerSelect">Select Server</label>
+                        <select id="playerServerSelect" onchange="loadPlayers()">
                             <option value="">Select server...</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="hintMessage">Message</label>
-                        <textarea id="hintMessage" placeholder="Enter hint message..." required></textarea>
-                    </div>
-                    <div class="number-input-group">
-                        <div class="form-group">
-                            <label for="typeSpeed">Type Speed (s)</label>
-                            <input type="number" id="typeSpeed" value="0.05" step="0.01" min="0.01">
-                        </div>
-                        <div class="form-group">
-                            <label for="displayTime">Display (s)</label>
-                            <input type="number" id="displayTime" value="3" step="0.5" min="0.5">
-                        </div>
-                    </div>
-                    <button type="submit">Send</button>
-                </form>
-                <div id="hintStatus"></div>
-            </div>
-
-            <!-- Execute Code Card -->
-            <div class="card">
-                <h2>Execute Code</h2>
-                <form id="runForm" onsubmit="runCode(event)">
-                    <div class="form-group">
-                        <label for="runServer">Server</label>
-                        <select id="runServer" required>
-                            <option value="">Select server...</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="runCode">Luau Code</label>
-                        <textarea id="runCode" placeholder="print('Hello World')" required></textarea>
-                    </div>
-                    <button type="submit">Execute</button>
-                </form>
-                <div id="runStatus"></div>
-            </div>
-
-            <!-- Active Servers Card -->
-            <div class="card full-width">
-                <h2>Active Servers</h2>
-                <div id="serversList" class="servers-grid">
-                    <div class="no-servers">Configure backend URL to see servers</div>
+                </div>
+                <div id="playersGrid" class="players-grid">
+                    <div class="no-servers">Select a server to view players</div>
                 </div>
             </div>
         </div>
@@ -344,6 +484,8 @@
         let servers = [];
         let backendUrl = localStorage.getItem('backendUrl') || '';
         let refreshInterval;
+        let playersRefreshInterval;
+        let currentTab = 'admin';
 
         window.addEventListener('DOMContentLoaded', () => {
             if (backendUrl) {
@@ -351,6 +493,39 @@
                 testConnection();
             }
         });
+
+        function switchTab(tabName) {
+            currentTab = tabName;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            // Handle players tab specific logic
+            if (tabName === 'players') {
+                updatePlayerServerSelect();
+                if (playersRefreshInterval) clearInterval(playersRefreshInterval);
+                playersRefreshInterval = setInterval(() => {
+                    const selectedServer = document.getElementById('playerServerSelect').value;
+                    if (selectedServer) {
+                        loadPlayers();
+                    }
+                }, 5000);
+            } else {
+                if (playersRefreshInterval) {
+                    clearInterval(playersRefreshInterval);
+                    playersRefreshInterval = null;
+                }
+            }
+        }
 
         function getBackendUrl() {
             const url = document.getElementById('backendUrl').value.trim();
@@ -422,6 +597,7 @@
                 servers = data.servers || [];
                 updateServersList();
                 updateServerSelects();
+                updatePlayerServerSelect();
                 updateConnectionStatus(true);
             } catch (err) {
                 console.error('Failed to load servers:', err);
@@ -459,6 +635,71 @@
             const placeholder = '<option value="">Select server...</option>';
             hintSelect.innerHTML = placeholder + options;
             runSelect.innerHTML = placeholder + options;
+        }
+
+        function updatePlayerServerSelect() {
+            const select = document.getElementById('playerServerSelect');
+            const currentValue = select.value;
+            
+            const options = servers.map(s => 
+                `<option value="${s.serverId}">${s.serverId} - ${s.name} (${s.players} players)</option>`
+            ).join('');
+
+            const placeholder = '<option value="">Select server...</option>';
+            select.innerHTML = placeholder + options;
+            
+            // Restore selection if still valid
+            if (currentValue && servers.find(s => s.serverId === currentValue)) {
+                select.value = currentValue;
+            }
+        }
+
+        async function loadPlayers() {
+            const serverId = document.getElementById('playerServerSelect').value;
+            const container = document.getElementById('playersGrid');
+            const countEl = document.getElementById('playerCount');
+            
+            if (!serverId) {
+                container.innerHTML = '<div class="no-servers">Select a server to view players</div>';
+                countEl.textContent = '0 players';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${backendUrl}/api/players/${serverId}`, {
+                    headers: {
+                        'ngrok-skip-browser-warning': '69420'
+                    }
+                });
+                
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                
+                const data = await res.json();
+                const players = data.players || [];
+                
+                countEl.textContent = `${players.length} player${players.length !== 1 ? 's' : ''}`;
+                
+                if (players.length === 0) {
+                    container.innerHTML = '<div class="no-servers">No players in this server</div>';
+                    return;
+                }
+
+                container.innerHTML = players.map(player => `
+                    <div class="player-card">
+                        <img class="player-headshot" 
+                             src="${player.headshot}" 
+                             alt="${player.name}"
+                             onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%231a1a1a%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22%23888%22 font-family=%22monospace%22 font-size=%2212%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22>No Image</text></svg>'">
+                        <div class="player-name">${player.name}</div>
+                        <div class="player-id">ID: ${player.userId}</div>
+                        <div class="player-server">${serverId}</div>
+                    </div>
+                `).join('');
+                
+            } catch (err) {
+                console.error('Failed to load players:', err);
+                container.innerHTML = `<div class="no-servers">Failed to load players: ${err.message}</div>`;
+            }
         }
 
         function showStatus(elementId, message, isError = false) {
