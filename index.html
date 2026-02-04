@@ -289,6 +289,7 @@
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('admin')">Admin</button>
                 <button class="tab" onclick="switchTab('console')">Console</button>
+                <button class="tab" onclick="switchTab('tools')">Tools</button>
             </div>
 
             <div id="adminTab" class="tab-content active">
@@ -358,6 +359,24 @@
                     </div>
                 </div>
             </div>
+
+            <div id="toolsTab" class="tab-content">
+                <div class="card">
+                    <h2>WAV Player</h2>
+                    <form id="wavForm" onsubmit="sendWAV(event)">
+                        <div class="form-group">
+                            <label for="wavServer">Server</label>
+                            <select id="wavServer" required><option value="">Select server...</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="wavUrl">URL</label>
+                            <input type="text" id="wavUrl" placeholder="usecatbox" required>
+                        </div>
+                        <button type="submit" id="wavBtn">Play WAV</button>
+                    </form>
+                    <div id="wavStatus"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -366,7 +385,6 @@
         let backendUrl = localStorage.getItem('backendUrl') || '';
         let refreshInterval;
         
-        // Cooldown management
         let adminCooldown = false;
         let consoleCooldown = false;
         let adminCooldownTimer = null;
@@ -463,12 +481,14 @@
         function updateServerSelects() {
             const hint = document.getElementById('hintServer');
             const run = document.getElementById('runServer');
+            const wav = document.getElementById('wavServer');
             const opts = servers.map(s => 
                 `<option value="${s.serverId}">${s.serverId} - ${s.name||'?'} (${s.players||0})</option>`
             ).join('');
             const ph = '<option value="">Select server...</option>';
             hint.innerHTML = ph + opts;
             run.innerHTML = ph + opts;
+            wav.innerHTML = ph + opts;
         }
 
         function showStatus(id, msg, isError = false) {
@@ -566,6 +586,40 @@
             }
         }
 
+        async function sendWAV(e) {
+            e.preventDefault();
+            if (adminCooldown) {
+                showStatus('wavStatus', 'Please wait for cooldown', true);
+                return;
+            }
+            if (!backendUrl) return showStatus('wavStatus', 'Configure backend first', true);
+            
+            const data = {
+                serverId: document.getElementById('wavServer').value,
+                url: document.getElementById('wavUrl').value.trim()
+            };
+            
+            if (!data.url) return showStatus('wavStatus', 'URL cannot be empty', true);
+            
+            try {
+                const res = await fetch(`${backendUrl}/api/sound`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': '69420' },
+                    body: JSON.stringify(data)
+                });
+                const r = await res.json();
+                if (r.success) {
+                    showStatus('wavStatus', `WAV #${r.wavNum || '?'} queued for playback`, false);
+                    document.getElementById('wavUrl').value = '';
+                    startAdminCooldown('wavBtn', 2);
+                } else {
+                    showStatus('wavStatus', r.error || 'Request failed', true);
+                }
+            } catch (err) {
+                showStatus('wavStatus', err.message, true);
+            }
+        }
+
         // ────────────────────────────── CONSOLE ──────────────────────────────
         const terminal = document.getElementById('terminalOutput');
         const cmdInput = document.getElementById('consoleInput');
@@ -651,7 +705,6 @@
             consoleCooldownTimer = setInterval(() => {
                 remaining--;
                 if (remaining > 0) {
-                    // Update last line
                     const lines = terminal.querySelectorAll('.terminal-line');
                     const lastLine = lines[lines.length - 1];
                     if (lastLine && lastLine.textContent.startsWith('⏱')) {
