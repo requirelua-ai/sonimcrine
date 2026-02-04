@@ -361,20 +361,77 @@
             </div>
 
             <div id="toolsTab" class="tab-content">
-                <div class="card">
-                    <h2>WAV Player</h2>
-                    <form id="wavForm" onsubmit="sendWAV(event)">
+                <div class="grid">
+                    <div class="card">
+                        <h2>WAV Player</h2>
+                        <form id="wavForm" onsubmit="sendWAV(event)">
+                            <div class="form-group">
+                                <label for="wavServer">Server</label>
+                                <select id="wavServer" required><option value="">Select server...</option></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="wavUrl">URL</label>
+                                <input type="text" id="wavUrl" placeholder="usecatbox" required>
+                            </div>
+                            <button type="submit" id="wavBtn">Play WAV</button>
+                        </form>
+                        <div id="wavStatus"></div>
+                    </div>
+
+                    <div class="card">
+                        <h2>Image to Roblox Converter</h2>
                         <div class="form-group">
-                            <label for="wavServer">Server</label>
-                            <select id="wavServer" required><option value="">Select server...</option></select>
+                            <label>Input Method</label>
+                            <div style="display:flex;gap:10px;margin-bottom:12px;">
+                                <button type="button" onclick="switchImageMode('file')" id="fileModeBtn" style="width:auto;padding:8px 16px;background:var(--green);">File Upload</button>
+                                <button type="button" onclick="switchImageMode('url')" id="urlModeBtn" style="width:auto;padding:8px 16px;background:var(--bg-lighter);border:1px solid var(--border);">Image URL</button>
+                            </div>
                         </div>
+
+                        <div id="fileInputSection">
+                            <div class="form-group">
+                                <label for="imageFile">Select Image</label>
+                                <input type="file" id="imageFile" accept="image/*" style="padding:8px;">
+                            </div>
+                        </div>
+
+                        <div id="urlInputSection" style="display:none;">
+                            <div class="form-group">
+                                <label for="imageUrl">Image URL</label>
+                                <input type="text" id="imageUrl" placeholder="https://example.com/image.png">
+                            </div>
+                        </div>
+
+                        <div class="number-input-group">
+                            <div class="form-group">
+                                <label for="imgWidth">Width (px)</label>
+                                <input type="number" id="imgWidth" value="25" min="10" max="100">
+                            </div>
+                            <div class="form-group">
+                                <label for="imgHeight">Height (px)</label>
+                                <input type="number" id="imgHeight" value="25" min="10" max="100">
+                            </div>
+                        </div>
+
                         <div class="form-group">
-                            <label for="wavUrl">URL</label>
-                            <input type="text" id="wavUrl" placeholder="usecatbox" required>
+                            <label style="display:flex;align-items:center;cursor:pointer;">
+                                <input type="checkbox" id="useCompression" checked style="width:auto;margin-right:8px;">
+                                Use compression
+                            </label>
                         </div>
-                        <button type="submit" id="wavBtn">Play WAV</button>
-                    </form>
-                    <div id="wavStatus"></div>
+
+                        <button onclick="convertImage()" id="convertBtn">Convert Image</button>
+                        <div id="imageStatus"></div>
+
+                        <div id="imageOutput" style="display:none;margin-top:20px;">
+                            <div class="form-group">
+                                <label>Generated Code</label>
+                                <textarea id="generatedCode" readonly style="min-height:150px;font-size:0.8rem;"></textarea>
+                            </div>
+                            <button onclick="copyCode()" style="background:var(--green-darker);">Copy to Clipboard</button>
+                            <div style="margin-top:12px;padding:12px;background:var(--bg);border:1px solid var(--border);font-size:0.85rem;" id="imageStats"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -389,6 +446,7 @@
         let consoleCooldown = false;
         let adminCooldownTimer = null;
         let consoleCooldownTimer = null;
+        let currentImageMode = 'file';
 
         window.addEventListener('DOMContentLoaded', () => {
             if (backendUrl) {
@@ -618,6 +676,197 @@
             } catch (err) {
                 showStatus('wavStatus', err.message, true);
             }
+        }
+
+        // ────────────────────────────── IMAGE CONVERTER ──────────────────────────────
+        function switchImageMode(mode) {
+            currentImageMode = mode;
+            const fileSection = document.getElementById('fileInputSection');
+            const urlSection = document.getElementById('urlInputSection');
+            const fileBtn = document.getElementById('fileModeBtn');
+            const urlBtn = document.getElementById('urlModeBtn');
+
+            if (mode === 'file') {
+                fileSection.style.display = 'block';
+                urlSection.style.display = 'none';
+                fileBtn.style.background = 'var(--green)';
+                fileBtn.style.border = 'none';
+                urlBtn.style.background = 'var(--bg-lighter)';
+                urlBtn.style.border = '1px solid var(--border)';
+            } else {
+                fileSection.style.display = 'none';
+                urlSection.style.display = 'block';
+                urlBtn.style.background = 'var(--green)';
+                urlBtn.style.border = 'none';
+                fileBtn.style.background = 'var(--bg-lighter)';
+                fileBtn.style.border = '1px solid var(--border)';
+            }
+        }
+
+        function isCloseToBlack(r, g, b, threshold = 10) {
+            return r < threshold && g < threshold && b < threshold;
+        }
+
+        function compressColors(colors) {
+            if (!colors || colors.length === 0) return [];
+            
+            const compressed = [];
+            let currentColor = colors[0];
+            let count = 1;
+            
+            for (let i = 1; i < colors.length; i++) {
+                if (colors[i] === currentColor) {
+                    count++;
+                } else {
+                    if (count > 2) {
+                        compressed.push(`${currentColor}*${count}`);
+                    } else {
+                        for (let j = 0; j < count; j++) {
+                            compressed.push(currentColor);
+                        }
+                    }
+                    currentColor = colors[i];
+                    count = 1;
+                }
+            }
+            
+            // Add last group
+            if (count > 2) {
+                compressed.push(`${currentColor}*${count}`);
+            } else {
+                for (let j = 0; j < count; j++) {
+                    compressed.push(currentColor);
+                }
+            }
+            
+            return compressed;
+        }
+
+        async function convertImage() {
+            const width = parseInt(document.getElementById('imgWidth').value);
+            const height = parseInt(document.getElementById('imgHeight').value);
+            const useCompression = document.getElementById('useCompression').checked;
+
+            let imageSource;
+            if (currentImageMode === 'file') {
+                const fileInput = document.getElementById('imageFile');
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    showStatus('imageStatus', 'Please select an image file', true);
+                    return;
+                }
+                imageSource = fileInput.files[0];
+            } else {
+                const urlInput = document.getElementById('imageUrl').value.trim();
+                if (!urlInput) {
+                    showStatus('imageStatus', 'Please enter an image URL', true);
+                    return;
+                }
+                imageSource = urlInput;
+            }
+
+            showStatus('imageStatus', 'Converting image...', false);
+
+            try {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+
+                await new Promise((resolve, reject) => {
+                    img.onload = resolve;
+                    img.onerror = () => reject(new Error('Failed to load image'));
+                    
+                    if (typeof imageSource === 'string') {
+                        img.src = imageSource;
+                    } else {
+                        const reader = new FileReader();
+                        reader.onload = (e) => { img.src = e.target.result; };
+                        reader.onerror = () => reject(new Error('Failed to read file'));
+                        reader.readAsDataURL(imageSource);
+                    }
+                });
+
+                // Create canvas and resize
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Get pixel data
+                const imageData = ctx.getImageData(0, 0, width, height);
+                const pixels = imageData.data;
+
+                // Generate color codes
+                const allColors = [];
+                for (let i = 0; i < pixels.length; i += 4) {
+                    const r = pixels[i];
+                    const g = pixels[i + 1];
+                    const b = pixels[i + 2];
+
+                    if (isCloseToBlack(r, g, b)) {
+                        allColors.push('a');
+                    } else {
+                        const hex = ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+                        allColors.push(hex);
+                    }
+                }
+
+                // Apply compression if enabled
+                const colorData = useCompression ? compressColors(allColors) : allColors;
+
+                // Create code string
+                const resolutionStr = `${width}x${height}`;
+                const colorString = colorData.join(' ');
+                const codeString = `${resolutionStr}\n${colorString}`;
+
+                // Calculate statistics
+                const originalLength = allColors.join(' ').length;
+                const compressedLength = colorString.length;
+                const compressionRatio = useCompression ? ((1 - compressedLength / originalLength) * 100) : 0;
+                const CHAT_LIMIT = 200;
+
+                // Display results
+                document.getElementById('generatedCode').value = codeString;
+                document.getElementById('imageOutput').style.display = 'block';
+
+                let stats = `Resolution: ${width}x${height}\n`;
+                stats += `Total pixels: ${allColors.length}\n`;
+                stats += `Original code length: ${originalLength} characters\n`;
+                
+                if (useCompression) {
+                    stats += `Compressed code length: ${compressedLength} characters\n`;
+                    stats += `Compression ratio: ${compressionRatio.toFixed(1)}%\n\n`;
+                } else {
+                    stats += `Code length: ${compressedLength} characters\n\n`;
+                }
+
+                if (codeString.length < CHAT_LIMIT) {
+                    stats += `✓ Fits in ONE Roblox chat message!\n\n`;
+                } else {
+                    const chunksNeeded = Math.ceil(codeString.length / CHAT_LIMIT);
+                    stats += `⚠ Needs ${chunksNeeded} chat messages (exceeds ${CHAT_LIMIT} char limit)\n`;
+                    stats += `  Consider using a smaller resolution or simpler image\n\n`;
+                }
+
+                stats += `To use in Roblox:\n  :image <paste the code>`;
+
+                document.getElementById('imageStats').textContent = stats;
+                showStatus('imageStatus', 'Image converted successfully!', false);
+
+            } catch (err) {
+                showStatus('imageStatus', `Error: ${err.message}`, true);
+            }
+        }
+
+        function copyCode() {
+            const codeArea = document.getElementById('generatedCode');
+            codeArea.select();
+            document.execCommand('copy');
+            
+            const originalText = event.target.textContent;
+            event.target.textContent = 'Copied!';
+            setTimeout(() => {
+                event.target.textContent = originalText;
+            }, 2000);
         }
 
         // ────────────────────────────── CONSOLE ──────────────────────────────
