@@ -1,19 +1,23 @@
-{
-  "bans": [
-    {
-      "username": "roblox",
-      "userid": 1,
-      "reason": "the noob"
-    },
-    {
-      "username": "AuxProtocol",
-      "userid": 9873550350,
-      "reason": "the idiot"
-    },
-    {
-      "username": "mariusRPT",
-      "userid": 94559842,
-      "reason": "SKIDDDDDDDDDDDED BOIIIII"
-    }
-  ]
-}
+[
+  {
+    "userId": 1,
+    "username": "roblox",
+    "reason": "the noob",
+    "bannedBy": "system",
+    "bannedAt": "2025-02-05T00:00:00.000Z"
+  },
+  {
+    "userId": 9873550350,
+    "username": "AuxProtocol",
+    "reason": "the idiot",
+    "bannedBy": "system",
+    "bannedAt": "2025-02-05T00:00:00.000Z"
+  },
+  {
+    "userId": 94559842,
+    "username": "mariusRPT",
+    "reason": "SKIDDDDDDDDDDDED BOIIIII",
+    "bannedBy": "system",
+    "bannedAt": "2025-02-05T00:00:00.000Z"
+  }
+]
