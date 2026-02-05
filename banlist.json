@@ -54,5 +54,12 @@
     "reason": "noob",
     "bannedBy": "442.2",
     "bannedAt": "2026-02-05T18:48:33.124Z"
+  },
+  {
+    "userId": "4948686256",
+    "username": "Unknown",
+    "reason": "erping",
+    "bannedBy": "442.2",
+    "bannedAt": "2026-02-05T20:30:18.855Z"
   }
 ]
