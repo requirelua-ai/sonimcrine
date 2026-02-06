@@ -96,5 +96,12 @@
     "reason": "skid",
     "bannedBy": "442.2",
     "bannedAt": "2026-02-06T00:03:24.317Z"
+  },
+  {
+    "userId": 4820469399,
+    "username": "bye",
+    "reason": "No reason provided",
+    "bannedBy": "442.2",
+    "bannedAt": "2026-02-06T18:09:57.468Z"
   }
 ]
