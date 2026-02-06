@@ -240,6 +240,27 @@
         .input-line { display:flex; align-items:center; }
         .player-list { margin:8px 0; padding-left:20px; color:#aaa; }
         
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--green);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: var(--bg);
+            font-weight: 600;
+        }
+        
         @media (max-width: 768px) {
             .spinner-sidebar {
                 width: 80px;
@@ -430,6 +451,59 @@
                             </div>
                             <button onclick="copyCode()" style="background:var(--green-darker);">Copy to Clipboard</button>
                             <div style="margin-top:12px;padding:12px;background:var(--bg);border:1px solid var(--border);font-size:0.85rem;" id="imageStats"></div>
+                        </div>
+                    </div>
+
+                    <div class="card full-width">
+                        <h2>Video to Roblox Converter</h2>
+                        <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:16px;">
+                            Convert videos.
+                        </p>
+                        
+                        <div class="form-group">
+                            <label for="videoFile">Select Video</label>
+                            <input type="file" id="videoFile" accept="video/*" style="padding:8px;">
+                        </div>
+
+                        <div class="grid" style="grid-template-columns:1fr 1fr 1fr;gap:12px;">
+                            <div class="form-group">
+                                <label for="videoWidth">Width (px)</label>
+                                <input type="number" id="videoWidth" value="100" min="10" max="200">
+                            </div>
+                            <div class="form-group">
+                                <label for="videoHeight">Height (px)</label>
+                                <input type="number" id="videoHeight" value="100" min="10" max="200">
+                            </div>
+                            <div class="form-group">
+                                <label for="videoFPS">FPS</label>
+                                <input type="number" id="videoFPS" value="5" min="1" max="30">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="videoDuration">Max Duration (seconds)</label>
+                            <input type="number" id="videoDuration" value="10" min="1" max="60">
+                        </div>
+
+                        <button onclick="convertVideo()" id="videoConvertBtn">Convert Video</button>
+                        
+                        <div id="videoProgress" style="display:none;margin-top:12px;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="videoProgressFill" style="width:0%;">0%</div>
+                            </div>
+                            <div style="margin-top:8px;font-size:0.85rem;color:var(--text-dim);" id="videoProgressText">Processing...</div>
+                        </div>
+                        
+                        <div id="videoStatus"></div>
+
+                        <div id="videoOutput" style="display:none;margin-top:20px;">
+                            <div class="form-group">
+                                <label>Generated Video Code</label>
+                                <textarea id="generatedVideoCode" readonly style="min-height:200px;font-size:0.75rem;"></textarea>
+                            </div>
+                            <button onclick="copyVideoCode()" style="background:var(--green-darker);">Copy to Clipboard</button>
+                            <button onclick="downloadVideoCode()" style="background:var(--green-darker);margin-top:8px;">Download as .txt</button>
+                            <div style="margin-top:12px;padding:12px;background:var(--bg);border:1px solid var(--border);font-size:0.85rem;white-space:pre-line;" id="videoStats"></div>
                         </div>
                     </div>
                 </div>
@@ -867,6 +941,158 @@
             setTimeout(() => {
                 event.target.textContent = originalText;
             }, 2000);
+        }
+
+        // ────────────────────────────── VIDEO CONVERTER ──────────────────────────────
+        async function convertVideo() {
+            const fileInput = document.getElementById('videoFile');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showStatus('videoStatus', 'Please select a video file', true);
+                return;
+            }
+
+            const width = parseInt(document.getElementById('videoWidth').value);
+            const height = parseInt(document.getElementById('videoHeight').value);
+            const fps = parseInt(document.getElementById('videoFPS').value);
+            const duration = parseInt(document.getElementById('videoDuration').value);
+
+            const videoFile = fileInput.files[0];
+            
+            // Show progress
+            document.getElementById('videoProgress').style.display = 'block';
+            document.getElementById('videoOutput').style.display = 'none';
+            updateVideoProgress(10, 'Loading video...');
+
+            try {
+                // Create video element
+                const video = document.createElement('video');
+                video.src = URL.createObjectURL(videoFile);
+                video.muted = true;
+
+                await new Promise((resolve, reject) => {
+                    video.onloadedmetadata = resolve;
+                    video.onerror = () => reject(new Error('Failed to load video'));
+                });
+
+                const videoDuration = Math.min(video.duration, duration);
+                const frameInterval = 1 / fps;
+                const totalFrames = Math.floor(videoDuration * fps);
+
+                updateVideoProgress(20, `Processing ${totalFrames} frames...`);
+
+                // Create canvas for frame extraction
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+
+                const frames = [];
+                
+                for (let i = 0; i < totalFrames; i++) {
+                    const currentTime = i * frameInterval;
+                    video.currentTime = currentTime;
+                    
+                    await new Promise(resolve => {
+                        video.onseeked = resolve;
+                    });
+
+                    // Draw frame to canvas
+                    ctx.drawImage(video, 0, 0, width, height);
+                    const imageData = ctx.getImageData(0, 0, width, height);
+                    const pixels = imageData.data;
+
+                    // Convert pixels to color codes
+                    const frameColors = [];
+                    for (let j = 0; j < pixels.length; j += 4) {
+                        const r = pixels[j];
+                        const g = pixels[j + 1];
+                        const b = pixels[j + 2];
+
+                        if (isCloseToBlack(r, g, b)) {
+                            frameColors.push('a');
+                        } else {
+                            const hex = ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0').toUpperCase();
+                            frameColors.push(hex);
+                        }
+                    }
+
+                    frames.push(`FRAME${i + 1}, ${frameColors.join(' ')}`);
+                    
+                    // Update progress
+                    const progress = 20 + Math.floor((i / totalFrames) * 70);
+                    updateVideoProgress(progress, `Processing frame ${i + 1}/${totalFrames}...`);
+                }
+
+                updateVideoProgress(95, 'Generating code...');
+
+                // Create final code string
+                const resolutionStr = `${width}x${height}`;
+                const codeString = `${resolutionStr}\n${fps}\n${frames.join('\n')}`;
+
+                // Calculate statistics
+                const codeLength = codeString.length;
+                const estimatedFileSize = (codeLength / 1024).toFixed(2);
+
+                // Display results
+                document.getElementById('generatedVideoCode').value = codeString;
+                document.getElementById('videoOutput').style.display = 'block';
+                updateVideoProgress(100, 'Complete!');
+
+                let stats = `Resolution: ${width}x${height}\n`;
+                stats += `FPS: ${fps}\n`;
+                stats += `Frames: ${totalFrames}\n`;
+                stats += `Duration: ${videoDuration.toFixed(2)}s\n`;
+                stats += `Code length: ${codeLength.toLocaleString()} characters\n`;
+                stats += `Estimated file size: ${estimatedFileSize} KB\n\n`;
+                stats += `To use in Roblox:\n  :video <paste the code>`;
+
+                document.getElementById('videoStats').textContent = stats;
+                showStatus('videoStatus', 'Video converted successfully!', false);
+
+                // Clean up
+                URL.revokeObjectURL(video.src);
+
+                setTimeout(() => {
+                    document.getElementById('videoProgress').style.display = 'none';
+                }, 2000);
+
+            } catch (err) {
+                showStatus('videoStatus', `Error: ${err.message}`, true);
+                document.getElementById('videoProgress').style.display = 'none';
+            }
+        }
+
+        function updateVideoProgress(percent, text) {
+            const fill = document.getElementById('videoProgressFill');
+            const textEl = document.getElementById('videoProgressText');
+            fill.style.width = percent + '%';
+            fill.textContent = percent + '%';
+            textEl.textContent = text;
+        }
+
+        function copyVideoCode() {
+            const codeArea = document.getElementById('generatedVideoCode');
+            codeArea.select();
+            document.execCommand('copy');
+            
+            const originalText = event.target.textContent;
+            event.target.textContent = 'Copied!';
+            setTimeout(() => {
+                event.target.textContent = originalText;
+            }, 2000);
+        }
+
+        function downloadVideoCode() {
+            const code = document.getElementById('generatedVideoCode').value;
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'video_code.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         // ────────────────────────────── CONSOLE ──────────────────────────────
