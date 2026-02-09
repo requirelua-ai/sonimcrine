@@ -208,7 +208,6 @@
         .connection-status { font-size:0.85rem; font-weight:500; padding:4px 10px; border:1px solid; }
         .connected { background:rgba(0,255,65,0.1); color:var(--green); border-color:var(--green-darker); }
         .disconnected { background:rgba(255,0,0,0.1); color:#ff4444; border-color:#8b0000; }
-
         .terminal {
             background:#0a0a0a;
             border:1px solid #222;
@@ -293,7 +292,6 @@
                 <h1>Holy Proxy</h1>
                 <p class="subtitle">Remote admin</p>
             </header>
-
             <div class="config-section">
                 <div class="config-header">
                     <h3>Backend Configuration</h3>
@@ -306,13 +304,11 @@
                 <button onclick="testConnection()">Connect</button>
                 <div id="configStatus"></div>
             </div>
-
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('admin')">Admin</button>
                 <button class="tab" onclick="switchTab('console')">Console</button>
                 <button class="tab" onclick="switchTab('tools')">Tools</button>
             </div>
-
             <div id="adminTab" class="tab-content active">
                 <div class="grid">
                     <div class="card">
@@ -340,7 +336,6 @@
                         </form>
                         <div id="hintStatus"></div>
                     </div>
-
                     <div class="card">
                         <h2>Execute Code</h2>
                         <form id="runForm" onsubmit="runCode(event)">
@@ -356,7 +351,6 @@
                         </form>
                         <div id="runStatus"></div>
                     </div>
-
                     <div class="card full-width">
                         <h2>Active Servers</h2>
                         <div id="serversList" class="servers-grid">
@@ -365,7 +359,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="consoleTab" class="tab-content">
                 <div class="card">
                     <h2>Console</h2>
@@ -373,14 +366,12 @@
                         <div class="terminal-line info">Console ready — type <span style="color:var(--green)">cmds</span> for help</div>
                         <div class="terminal-line"></div>
                     </div>
-
                     <div class="input-line">
                         <span class="prompt">&gt;</span>
                         <input type="text" id="consoleInput" class="command-input" placeholder="type command..." autocomplete="off" autofocus>
                     </div>
                 </div>
             </div>
-
             <div id="toolsTab" class="tab-content">
                 <div class="grid">
                     <div class="card">
@@ -398,7 +389,6 @@
                         </form>
                         <div id="wavStatus"></div>
                     </div>
-
                     <div class="card">
                         <h2>Image to Roblox Converter</h2>
                         <div class="form-group">
@@ -408,21 +398,18 @@
                                 <button type="button" onclick="switchImageMode('url')" id="urlModeBtn" style="width:auto;padding:8px 16px;background:var(--bg-lighter);border:1px solid var(--border);">Image URL</button>
                             </div>
                         </div>
-
                         <div id="fileInputSection">
                             <div class="form-group">
                                 <label for="imageFile">Select Image</label>
                                 <input type="file" id="imageFile" accept="image/*" style="padding:8px;">
                             </div>
                         </div>
-
                         <div id="urlInputSection" style="display:none;">
                             <div class="form-group">
                                 <label for="imageUrl">Image URL</label>
                                 <input type="text" id="imageUrl" placeholder="https://example.com/image.png">
                             </div>
                         </div>
-
                         <div class="number-input-group">
                             <div class="form-group">
                                 <label for="imgWidth">Width (px)</label>
@@ -433,17 +420,14 @@
                                 <input type="number" id="imgHeight" value="25" min="10" max="100">
                             </div>
                         </div>
-
                         <div class="form-group">
                             <label style="display:flex;align-items:center;cursor:pointer;">
                                 <input type="checkbox" id="useCompression" checked style="width:auto;margin-right:8px;">
                                 Use compression
                             </label>
                         </div>
-
                         <button onclick="convertImage()" id="convertBtn">Convert Image</button>
                         <div id="imageStatus"></div>
-
                         <div id="imageOutput" style="display:none;margin-top:20px;">
                             <div class="form-group">
                                 <label>Generated Code</label>
@@ -453,7 +437,6 @@
                             <div style="margin-top:12px;padding:12px;background:var(--bg);border:1px solid var(--border);font-size:0.85rem;" id="imageStats"></div>
                         </div>
                     </div>
-
                     <div class="card full-width">
                         <h2>Video to Roblox Converter</h2>
                         <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:16px;">
@@ -464,7 +447,6 @@
                             <label for="videoFile">Select Video</label>
                             <input type="file" id="videoFile" accept="video/*" style="padding:8px;">
                         </div>
-
                         <div class="grid" style="grid-template-columns:1fr 1fr 1fr;gap:12px;">
                             <div class="form-group">
                                 <label for="videoWidth">Width (px)</label>
@@ -479,12 +461,10 @@
                                 <input type="number" id="videoFPS" value="5" min="1" max="30">
                             </div>
                         </div>
-
                         <div class="form-group">
                             <label for="videoDuration">Max Duration (seconds)</label>
                             <input type="number" id="videoDuration" value="10" min="1" max="60">
                         </div>
-
                         <button onclick="convertVideo()" id="videoConvertBtn">Convert Video</button>
                         
                         <div id="videoProgress" style="display:none;margin-top:12px;">
@@ -495,7 +475,6 @@
                         </div>
                         
                         <div id="videoStatus"></div>
-
                         <div id="videoOutput" style="display:none;margin-top:20px;">
                             <div class="form-group">
                                 <label>Generated Video Code</label>
@@ -510,7 +489,6 @@
             </div>
         </div>
     </div>
-
     <script>
         let servers = [];
         let backendUrl = localStorage.getItem('backendUrl') || '';
@@ -521,14 +499,14 @@
         let adminCooldownTimer = null;
         let consoleCooldownTimer = null;
         let currentImageMode = 'file';
-
+        
         window.addEventListener('DOMContentLoaded', () => {
             if (backendUrl) {
                 document.getElementById('backendUrl').value = backendUrl;
                 testConnection();
             }
         });
-
+        
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
@@ -536,7 +514,7 @@
             document.getElementById(tabName + 'Tab').classList.add('active');
             if (tabName === 'console') document.getElementById('consoleInput').focus();
         }
-
+        
         function getBackendUrl() {
             const url = document.getElementById('backendUrl').value.trim();
             if (!url) {
@@ -545,7 +523,7 @@
             }
             return url.replace(/\/$/, '');
         }
-
+        
         async function testConnection() {
             const url = getBackendUrl();
             if (!url) return;
@@ -568,13 +546,13 @@
                 updateConnectionStatus(false);
             }
         }
-
+        
         function updateConnectionStatus(connected) {
             const el = document.getElementById('connectionStatus');
             el.className = 'connection-status ' + (connected ? 'connected' : 'disconnected');
             el.textContent = connected ? 'Connected' : 'Disconnected';
         }
-
+        
         async function loadServers() {
             if (!backendUrl) return;
             try {
@@ -592,7 +570,7 @@
                 updateConnectionStatus(false);
             }
         }
-
+        
         function updateServersList() {
             const container = document.getElementById('serversList');
             if (servers.length === 0) {
@@ -609,7 +587,7 @@
                 </div>
             `).join('');
         }
-
+        
         function updateServerSelects() {
             const hint = document.getElementById('hintServer');
             const run = document.getElementById('runServer');
@@ -622,14 +600,14 @@
             run.innerHTML = ph + opts;
             wav.innerHTML = ph + opts;
         }
-
+        
         function showStatus(id, msg, isError = false) {
             const el = document.getElementById(id);
             const cls = isError ? 'status-error' : 'status-success';
             el.innerHTML = `<div class="status-message ${cls}">${msg}</div>`;
             setTimeout(() => el.innerHTML = '', 6000);
         }
-
+        
         function startAdminCooldown(buttonId, seconds) {
             adminCooldown = true;
             const btn = document.getElementById(buttonId);
@@ -653,7 +631,7 @@
                 }
             }, 1000);
         }
-
+        
         async function sendHint(e) {
             e.preventDefault();
             if (adminCooldown) {
@@ -686,7 +664,7 @@
                 showStatus('hintStatus', err.message, true);
             }
         }
-
+        
         async function runCode(e) {
             e.preventDefault();
             if (adminCooldown) {
@@ -717,7 +695,7 @@
                 showStatus('runStatus', err.message, true);
             }
         }
-
+        
         async function sendWAV(e) {
             e.preventDefault();
             if (adminCooldown) {
@@ -751,7 +729,7 @@
                 showStatus('wavStatus', err.message, true);
             }
         }
-
+        
         // ────────────────────────────── IMAGE CONVERTER ──────────────────────────────
         function switchImageMode(mode) {
             currentImageMode = mode;
@@ -759,7 +737,6 @@
             const urlSection = document.getElementById('urlInputSection');
             const fileBtn = document.getElementById('fileModeBtn');
             const urlBtn = document.getElementById('urlModeBtn');
-
             if (mode === 'file') {
                 fileSection.style.display = 'block';
                 urlSection.style.display = 'none';
@@ -776,11 +753,11 @@
                 fileBtn.style.border = '1px solid var(--border)';
             }
         }
-
+        
         function isCloseToBlack(r, g, b, threshold = 10) {
             return r < threshold && g < threshold && b < threshold;
         }
-
+        
         function compressColors(colors) {
             if (!colors || colors.length === 0) return [];
             
@@ -815,12 +792,11 @@
             
             return compressed;
         }
-
+        
         async function convertImage() {
             const width = parseInt(document.getElementById('imgWidth').value);
             const height = parseInt(document.getElementById('imgHeight').value);
             const useCompression = document.getElementById('useCompression').checked;
-
             let imageSource;
             if (currentImageMode === 'file') {
                 const fileInput = document.getElementById('imageFile');
@@ -837,13 +813,10 @@
                 }
                 imageSource = urlInput;
             }
-
             showStatus('imageStatus', 'Converting image...', false);
-
             try {
                 const img = new Image();
                 img.crossOrigin = 'anonymous';
-
                 await new Promise((resolve, reject) => {
                     img.onload = resolve;
                     img.onerror = () => reject(new Error('Failed to load image'));
@@ -857,25 +830,21 @@
                         reader.readAsDataURL(imageSource);
                     }
                 });
-
                 // Create canvas and resize
                 const canvas = document.createElement('canvas');
                 canvas.width = width;
                 canvas.height = height;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
-
                 // Get pixel data
                 const imageData = ctx.getImageData(0, 0, width, height);
                 const pixels = imageData.data;
-
                 // Generate color codes
                 const allColors = [];
                 for (let i = 0; i < pixels.length; i += 4) {
                     const r = pixels[i];
                     const g = pixels[i + 1];
                     const b = pixels[i + 2];
-
                     if (isCloseToBlack(r, g, b)) {
                         allColors.push('a');
                     } else {
@@ -883,25 +852,20 @@
                         allColors.push(hex);
                     }
                 }
-
                 // Apply compression if enabled
                 const colorData = useCompression ? compressColors(allColors) : allColors;
-
                 // Create code string
                 const resolutionStr = `${width}x${height}`;
                 const colorString = colorData.join(' ');
                 const codeString = `${resolutionStr}\n${colorString}`;
-
                 // Calculate statistics
                 const originalLength = allColors.join(' ').length;
                 const compressedLength = colorString.length;
                 const compressionRatio = useCompression ? ((1 - compressedLength / originalLength) * 100) : 0;
                 const CHAT_LIMIT = 200;
-
                 // Display results
                 document.getElementById('generatedCode').value = codeString;
                 document.getElementById('imageOutput').style.display = 'block';
-
                 let stats = `Resolution: ${width}x${height}\n`;
                 stats += `Total pixels: ${allColors.length}\n`;
                 stats += `Original code length: ${originalLength} characters\n`;
@@ -912,7 +876,6 @@
                 } else {
                     stats += `Code length: ${compressedLength} characters\n\n`;
                 }
-
                 if (codeString.length < CHAT_LIMIT) {
                     stats += `✓ Fits in ONE Roblox chat message!\n\n`;
                 } else {
@@ -920,17 +883,14 @@
                     stats += `⚠ Needs ${chunksNeeded} chat messages (exceeds ${CHAT_LIMIT} char limit)\n`;
                     stats += `  Consider using a smaller resolution or simpler image\n\n`;
                 }
-
                 stats += `To use in Roblox:\n  :image <paste the code>`;
-
                 document.getElementById('imageStats').textContent = stats;
                 showStatus('imageStatus', 'Image converted successfully!', false);
-
             } catch (err) {
                 showStatus('imageStatus', `Error: ${err.message}`, true);
             }
         }
-
+        
         function copyCode() {
             const codeArea = document.getElementById('generatedCode');
             codeArea.select();
@@ -942,7 +902,7 @@
                 event.target.textContent = originalText;
             }, 2000);
         }
-
+        
         // ────────────────────────────── VIDEO CONVERTER ──────────────────────────────
         async function convertVideo() {
             const fileInput = document.getElementById('videoFile');
@@ -950,42 +910,34 @@
                 showStatus('videoStatus', 'Please select a video file', true);
                 return;
             }
-
             const width = parseInt(document.getElementById('videoWidth').value);
             const height = parseInt(document.getElementById('videoHeight').value);
             const fps = parseInt(document.getElementById('videoFPS').value);
             const duration = parseInt(document.getElementById('videoDuration').value);
-
             const videoFile = fileInput.files[0];
             
             // Show progress
             document.getElementById('videoProgress').style.display = 'block';
             document.getElementById('videoOutput').style.display = 'none';
             updateVideoProgress(10, 'Loading video...');
-
             try {
                 // Create video element
                 const video = document.createElement('video');
                 video.src = URL.createObjectURL(videoFile);
                 video.muted = true;
-
                 await new Promise((resolve, reject) => {
                     video.onloadedmetadata = resolve;
                     video.onerror = () => reject(new Error('Failed to load video'));
                 });
-
                 const videoDuration = Math.min(video.duration, duration);
                 const frameInterval = 1 / fps;
                 const totalFrames = Math.floor(videoDuration * fps);
-
                 updateVideoProgress(20, `Processing ${totalFrames} frames...`);
-
                 // Create canvas for frame extraction
                 const canvas = document.createElement('canvas');
                 canvas.width = width;
                 canvas.height = height;
                 const ctx = canvas.getContext('2d');
-
                 const frames = [];
                 
                 for (let i = 0; i < totalFrames; i++) {
@@ -995,19 +947,16 @@
                     await new Promise(resolve => {
                         video.onseeked = resolve;
                     });
-
                     // Draw frame to canvas
                     ctx.drawImage(video, 0, 0, width, height);
                     const imageData = ctx.getImageData(0, 0, width, height);
                     const pixels = imageData.data;
-
                     // Convert pixels to color codes
                     const frameColors = [];
                     for (let j = 0; j < pixels.length; j += 4) {
                         const r = pixels[j];
                         const g = pixels[j + 1];
                         const b = pixels[j + 2];
-
                         if (isCloseToBlack(r, g, b)) {
                             frameColors.push('a');
                         } else {
@@ -1015,29 +964,23 @@
                             frameColors.push(hex);
                         }
                     }
-
                     frames.push(`FRAME${i + 1}, ${frameColors.join(' ')}`);
                     
                     // Update progress
                     const progress = 20 + Math.floor((i / totalFrames) * 70);
                     updateVideoProgress(progress, `Processing frame ${i + 1}/${totalFrames}...`);
                 }
-
                 updateVideoProgress(95, 'Generating code...');
-
                 // Create final code string
                 const resolutionStr = `${width}x${height}`;
                 const codeString = `${resolutionStr}\n${fps}\n${frames.join('\n')}`;
-
                 // Calculate statistics
                 const codeLength = codeString.length;
                 const estimatedFileSize = (codeLength / 1024).toFixed(2);
-
                 // Display results
                 document.getElementById('generatedVideoCode').value = codeString;
                 document.getElementById('videoOutput').style.display = 'block';
                 updateVideoProgress(100, 'Complete!');
-
                 let stats = `Resolution: ${width}x${height}\n`;
                 stats += `FPS: ${fps}\n`;
                 stats += `Frames: ${totalFrames}\n`;
@@ -1045,23 +988,19 @@
                 stats += `Code length: ${codeLength.toLocaleString()} characters\n`;
                 stats += `Estimated file size: ${estimatedFileSize} KB\n\n`;
                 stats += `To use in Roblox:\n  :video <paste the code>`;
-
                 document.getElementById('videoStats').textContent = stats;
                 showStatus('videoStatus', 'Video converted successfully!', false);
-
                 // Clean up
                 URL.revokeObjectURL(video.src);
-
                 setTimeout(() => {
                     document.getElementById('videoProgress').style.display = 'none';
                 }, 2000);
-
             } catch (err) {
                 showStatus('videoStatus', `Error: ${err.message}`, true);
                 document.getElementById('videoProgress').style.display = 'none';
             }
         }
-
+        
         function updateVideoProgress(percent, text) {
             const fill = document.getElementById('videoProgressFill');
             const textEl = document.getElementById('videoProgressText');
@@ -1069,7 +1008,7 @@
             fill.textContent = percent + '%';
             textEl.textContent = text;
         }
-
+        
         function copyVideoCode() {
             const codeArea = document.getElementById('generatedVideoCode');
             codeArea.select();
@@ -1081,7 +1020,7 @@
                 event.target.textContent = originalText;
             }, 2000);
         }
-
+        
         function downloadVideoCode() {
             const code = document.getElementById('generatedVideoCode').value;
             const blob = new Blob([code], { type: 'text/plain' });
@@ -1094,11 +1033,11 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
-
+        
         // ────────────────────────────── CONSOLE ──────────────────────────────
         const terminal = document.getElementById('terminalOutput');
         const cmdInput = document.getElementById('consoleInput');
-
+        
         function addLine(text, className = '') {
             const div = document.createElement('div');
             div.className = 'terminal-line ' + className;
@@ -1106,7 +1045,7 @@
             terminal.appendChild(div);
             terminal.scrollTop = terminal.scrollHeight;
         }
-
+        
         function addPlayerList(players) {
             if (!players || players.length === 0) {
                 addLine("  (no players online)", "info");
@@ -1117,7 +1056,7 @@
                 addLine(`    • ${p.name}  (ID: ${p.userId})`, "player-list");
             });
         }
-
+        
         async function fetchPlayers(serverId) {
             if (!backendUrl) {
                 addLine("Backend not connected", "error");
@@ -1140,7 +1079,7 @@
                 addLine(`Failed to fetch players: ${err.message}`, "error");
             }
         }
-
+        
         async function sendModCommand(type, serverId, playerName, reason) {
             if (!backendUrl) {
                 addLine("Backend not connected", "error");
@@ -1168,7 +1107,7 @@
                 addLine(`Network error: ${err.message}`, "error");
             }
         }
-
+        
         function startConsoleCooldown() {
             consoleCooldown = true;
             cmdInput.disabled = true;
@@ -1195,7 +1134,7 @@
                 }
             }, 1000);
         }
-
+        
         function handleCommand(raw) {
             const cmd = raw.trim();
             if (!cmd) return;
@@ -1207,11 +1146,10 @@
             }
             
             addLine('> ' + cmd);
-
             const parts = cmd.split(/\s+/);
             const action = parts[0].toLowerCase();
             const args = parts.slice(1);
-
+            
             switch (action) {
                 case 'cmds':
                 case 'help':
@@ -1224,7 +1162,6 @@
                     addLine('');
                     startConsoleCooldown();
                     break;
-
                 case 'plrs':
                     if (args.length !== 1) {
                         addLine("Usage: plrs <serverId>", 'error');
@@ -1236,7 +1173,6 @@
                     fetchPlayers(serverId);
                     startConsoleCooldown();
                     break;
-
                 case 'kick':
                 case 'ban':
                 case 'kill':
@@ -1250,14 +1186,13 @@
                     sendModCommand(action, modServerId, playerName, reason);
                     startConsoleCooldown();
                     break;
-
                 default:
                     addLine(`Unknown command: ${action}`, 'error');
                     addLine("Type 'cmds' for help", 'info');
                     startConsoleCooldown();
             }
         }
-
+        
         cmdInput.addEventListener('keydown', e => {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -1266,7 +1201,7 @@
                 cmdInput.value = '';
             }
         });
-
+        
         terminal.addEventListener('click', () => {
             if (!consoleCooldown) cmdInput.focus();
         });
