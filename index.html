@@ -338,14 +338,17 @@
                     </div>
                     <div class="card">
                         <h2>Execute Code</h2>
+                        <!-- FIX: renamed textarea id from "runCode" to "runCodeInput" to avoid
+                             collision with the runCode() function, which caused form submit
+                             to resolve to the DOM element instead of the function and refresh the page -->
                         <form id="runForm" onsubmit="runCode(event)">
                             <div class="form-group">
                                 <label for="runServer">Server</label>
                                 <select id="runServer" required><option value="">Select server...</option></select>
                             </div>
                             <div class="form-group">
-                                <label for="runCode">Luau Code</label>
-                                <textarea id="runCode" placeholder="print('Hello from proxy')" required></textarea>
+                                <label for="runCodeInput">Luau Code</label>
+                                <textarea id="runCodeInput" placeholder="print('Hello from proxy')" required></textarea>
                             </div>
                             <button type="submit" id="runBtn">Execute</button>
                         </form>
@@ -674,7 +677,8 @@
             if (!backendUrl) return showStatus('runStatus', 'Configure backend first', true);
             const data = {
                 serverId: document.getElementById('runServer').value,
-                code: document.getElementById('runCode').value.trim()
+                // FIX: updated to match renamed textarea id "runCodeInput"
+                code: document.getElementById('runCodeInput').value.trim()
             };
             if (!data.code) return showStatus('runStatus', 'Code cannot be empty', true);
             try {
@@ -686,7 +690,8 @@
                 const r = await res.json();
                 if (r.success) {
                     showStatus('runStatus', `Code #${r.runNum || '?'} queued`, false);
-                    document.getElementById('runCode').value = '';
+                    // FIX: updated to match renamed textarea id "runCodeInput"
+                    document.getElementById('runCodeInput').value = '';
                     startAdminCooldown('runBtn', 2);
                 } else {
                     showStatus('runStatus', r.error || 'Request failed', true);
