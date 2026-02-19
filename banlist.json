@@ -145,5 +145,12 @@
     "reason": "fuckin noob",
     "bannedBy": "442.2",
     "bannedAt": "2026-02-13T22:19:46.621Z"
+  },
+  {
+    "userId": null,
+    "username": "Unknown",
+    "reason": "No reason provided",
+    "bannedBy": "442.2",
+    "bannedAt": "2026-02-19T01:35:23.546Z"
   }
 ]
