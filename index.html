@@ -3,1213 +3,842 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Holy admin</title>
+    <title>Holy Proxy</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
         :root {
-            --bg: #0d0d0d;
-            --bg-lighter: #1a1a1a;
-            --green: #00ff41;
-            --green-dim: #00cc33;
-            --green-darker: #009929;
-            --text: #e0e0e0;
-            --text-dim: #888;
-            --border: #222;
+            --bg:       #080808;
+            --bg2:      #111;
+            --bg3:      #181818;
+            --text:     #c8c8c8;
+            --text-dim: #4a4a4a;
+            --border:   #1c1c1c;
+            --border2:  #252525;
+            --ok:       #4ade80;
+            --err:      #f87171;
         }
+
         body {
-            font-family: 'IBM Plex Mono', monospace;
+            font-family: 'JetBrains Mono', monospace;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            line-height: 1.6;
             display: flex;
         }
-        
-        /* Spinner Sidebar */
-        .spinner-sidebar {
-            width: 120px;
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            background: var(--bg-lighter);
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: 175px;
+            min-height: 100vh;
+            background: var(--bg2);
             border-right: 1px solid var(--border);
             display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
+            flex-direction: column;
+            position: fixed;
+            left: 0; top: 0;
+            z-index: 10;
         }
-        
-        .spinner {
-            width: 70.4px;
-            height: 70.4px;
-            --clr: var(--green);
-            --clr-alpha: rgba(0, 255, 65, 0.1);
-            animation: spinner 1.6s infinite ease;
-            transform-style: preserve-3d;
+
+        .sidebar-logo {
+            padding: 20px 16px 16px;
+            border-bottom: 1px solid var(--border);
         }
-        .spinner > div {
-            background-color: var(--clr-alpha);
-            height: 100%;
-            position: absolute;
-            width: 100%;
-            border: 3.5px solid var(--clr);
-        }
-        .spinner div:nth-of-type(1) {
-            transform: translateZ(-35.2px) rotateY(180deg);
-        }
-        .spinner div:nth-of-type(2) {
-            transform: rotateY(-270deg) translateX(50%);
-            transform-origin: top right;
-        }
-        .spinner div:nth-of-type(3) {
-            transform: rotateY(270deg) translateX(-50%);
-            transform-origin: center left;
-        }
-        .spinner div:nth-of-type(4) {
-            transform: rotateX(90deg) translateY(-50%);
-            transform-origin: top center;
-        }
-        .spinner div:nth-of-type(5) {
-            transform: rotateX(-90deg) translateY(50%);
-            transform-origin: bottom center;
-        }
-        .spinner div:nth-of-type(6) {
-            transform: translateZ(35.2px);
-        }
-        @keyframes spinner {
-            0% {
-                transform: rotate(45deg) rotateX(-25deg) rotateY(25deg);
-            }
-            50% {
-                transform: rotate(45deg) rotateX(-385deg) rotateY(25deg);
-            }
-            100% {
-                transform: rotate(45deg) rotateX(-385deg) rotateY(385deg);
-            }
-        }
-        
-        .main-content {
-            margin-left: 120px;
-            flex: 1;
-        }
-        
-        .container { max-width:1200px; margin:0 auto; padding:40px 20px; }
-        header { margin-bottom:50px; border-bottom:1px solid var(--border); padding-bottom:20px; }
-        h1 { font-size:2rem; font-weight:500; color:var(--green); margin-bottom:8px; }
-        .subtitle { font-size:0.9rem; color:var(--text-dim); }
-        .tabs { display:flex; gap:10px; margin-bottom:30px; border-bottom:1px solid var(--border); }
-        .tab {
-            padding:12px 24px;
-            background:transparent;
-            border:none;
-            color:var(--text-dim);
-            font-family:'IBM Plex Mono',monospace;
-            font-size:0.9rem;
-            font-weight:500;
-            cursor:pointer;
-            transition:all 0.2s;
-            border-bottom:2px solid transparent;
-        }
-        .tab:hover { color:var(--text); }
-        .tab.active { color:var(--green); border-bottom-color:var(--green); }
-        .tab-content { display:none; }
-        .tab-content.active { display:block; }
-        .config-section {
-            background:var(--bg-lighter);
-            border:1px solid var(--green-darker);
-            padding:24px;
-            margin-bottom:30px;
-        }
-        .config-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
-        .config-header h3 { font-size:1rem; font-weight:500; color:var(--green); }
-        .grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px; }
-        @media (max-width:1024px) { .grid { grid-template-columns:1fr; } }
-        .card { background:var(--bg-lighter); border:1px solid var(--border); padding:24px; }
-        .card h2 { font-size:1.1rem; font-weight:500; color:var(--green); margin-bottom:20px; }
-        .form-group { margin-bottom:18px; }
-        label { display:block; margin-bottom:6px; font-size:0.85rem; color:var(--text-dim); font-weight:500; }
-        input, textarea, select {
-            width:100%;
-            padding:10px 12px;
-            background:var(--bg);
-            border:1px solid var(--border);
-            color:var(--text);
-            font-family:'IBM Plex Mono',monospace;
-            font-size:0.9rem;
-            transition:border-color 0.2s;
-        }
-        input:focus, textarea:focus, select:focus { outline:none; border-color:var(--green-darker); }
-        textarea { resize:vertical; min-height:100px; }
-        .number-input-group { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-        button {
-            width:100%;
-            padding:12px;
-            background:var(--green);
-            border:none;
-            color:var(--bg);
-            font-family:'IBM Plex Mono',monospace;
-            font-size:0.9rem;
-            font-weight:600;
-            cursor:pointer;
-            transition:background 0.2s;
-            position: relative;
-        }
-        button:hover { background:var(--green-dim); }
-        button:active { background:var(--green-darker); }
-        button:disabled { 
-            opacity:0.5; 
-            cursor:not-allowed;
-            background:var(--text-dim);
-        }
-        .cooldown-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .sidebar-logo h1 {
             font-size: 0.85rem;
+            font-weight: 500;
             color: var(--text);
-            pointer-events: none;
         }
-        .servers-grid { display:grid; gap:10px; }
-        .server-item {
-            background:var(--bg);
-            border:1px solid var(--border);
-            padding:14px;
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            transition:border-color 0.2s;
+        .sidebar-logo p {
+            font-size: 0.67rem;
+            color: var(--text-dim);
+            margin-top: 3px;
         }
-        .server-item:hover { border-color:var(--green-darker); }
-        .server-info { flex:1; }
-        .server-name { font-weight:500; color:var(--green); font-size:0.95rem; margin-bottom:4px; }
-        .server-details { font-size:0.8rem; color:var(--text-dim); }
-        .server-players {
-            background:var(--green);
-            color:var(--bg);
-            padding:4px 10px;
-            font-size:0.85rem;
-            font-weight:600;
+
+        .sidebar-nav { flex: 1; padding: 10px 0; }
+        .nav-item {
+            padding: 8px 16px;
+            font-size: 0.79rem;
+            color: var(--text-dim);
+            cursor: pointer;
+            border-left: 2px solid transparent;
+            transition: all 0.12s;
         }
-        .no-servers { text-align:center; padding:30px; color:var(--text-dim); }
-        .status-message { margin-top:14px; padding:10px 12px; font-size:0.85rem; border:1px solid; }
-        .status-success { background:rgba(0,255,65,0.1); border-color:var(--green-darker); color:var(--green); }
-        .status-error { background:rgba(255,0,0,0.1); border-color:#8b0000; color:#ff4444; }
-        .full-width { grid-column:1 / -1; }
-        .connection-status { font-size:0.85rem; font-weight:500; padding:4px 10px; border:1px solid; }
-        .connected { background:rgba(0,255,65,0.1); color:var(--green); border-color:var(--green-darker); }
-        .disconnected { background:rgba(255,0,0,0.1); color:#ff4444; border-color:#8b0000; }
-        .terminal {
-            background:#0a0a0a;
-            border:1px solid #222;
-            padding:16px;
-            min-height:320px;
-            max-height:520px;
-            overflow-y:auto;
-            font-size:0.95rem;
-            line-height:1.45;
-            margin-bottom:16px;
-            white-space:pre-wrap;
-            word-break:break-word;
-            border-radius:4px;
+        .nav-item:hover { color: var(--text); }
+        .nav-item.active { color: var(--text); border-left-color: var(--text-dim); }
+
+        .sidebar-conn {
+            padding: 14px 16px;
+            border-top: 1px solid var(--border);
         }
-        .terminal-line { margin-bottom:3px; }
-        .prompt { color:var(--green); margin-right:8px; user-select:none; }
-        .command-input {
-            flex:1;
-            background:transparent;
-            border:none;
-            color:var(--text);
-            font-family:'IBM Plex Mono',monospace;
-            font-size:0.95rem;
-            outline:none;
-        }
-        .error { color:#ff5555; }
-        .success { color:var(--green); }
-        .info { color:#55aaff; }
-        .input-line { display:flex; align-items:center; }
-        .player-list { margin:8px 0; padding-left:20px; color:#aaa; }
-        
-        .progress-bar {
+        .sidebar-conn input {
             width: 100%;
-            height: 20px;
             background: var(--bg);
-            border: 1px solid var(--border);
-            margin-top: 10px;
+            border: 1px solid var(--border2);
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.71rem;
+            padding: 6px 8px;
+            outline: none;
+            margin-bottom: 6px;
+        }
+        .sidebar-conn input:focus { border-color: var(--text-dim); }
+        .sidebar-conn input::placeholder { color: var(--text-dim); }
+        .btn-connect {
+            width: 100%;
+            padding: 6px;
+            background: transparent;
+            border: 1px solid var(--border2);
+            color: var(--text-dim);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.73rem;
+            cursor: pointer;
+            transition: all 0.12s;
+        }
+        .btn-connect:hover { color: var(--text); border-color: var(--text-dim); }
+        .conn-status {
+            font-size: 0.67rem;
+            color: var(--text-dim);
+            margin-top: 6px;
+        }
+        .conn-status.ok  { color: var(--ok); }
+        .conn-status.err { color: var(--err); }
+
+        /* ── MAIN ── */
+        .main {
+            margin-left: 175px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
             overflow: hidden;
         }
-        
-        .progress-fill {
+
+        /* ── CONSOLE PAGE ── */
+        #page-console {
+            display: flex;
+            flex-direction: column;
             height: 100%;
-            background: var(--green);
-            transition: width 0.3s;
+            background: #000;
+        }
+
+        .terminal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 16px 6px;
+            font-size: 0.82rem;
+            line-height: 1.55;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .tl { margin-bottom: 1px; color: var(--text); }
+        .tl.err { color: var(--err); }
+        .tl.ok  { color: var(--ok); }
+        .tl.dim { color: var(--text-dim); }
+
+        .terminal-input {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            color: var(--bg);
-            font-weight: 600;
+            gap: 8px;
+            padding: 9px 16px;
+            border-top: 1px solid #111;
+            background: #000;
+            flex-shrink: 0;
         }
-        
-        @media (max-width: 768px) {
-            .spinner-sidebar {
-                width: 80px;
-            }
-            .main-content {
-                margin-left: 80px;
-            }
-            .spinner {
-                width: 50px;
-                height: 50px;
-            }
+        .term-prompt { color: var(--text-dim); font-size: 0.82rem; user-select: none; }
+        .term-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            outline: none;
         }
+        .term-input:disabled { opacity: 0.3; }
+
+        /* ── SERVERS PAGE ── */
+        #page-servers {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: 22px 26px;
+        }
+
+        .page-section-label {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 14px;
+        }
+
+        .server-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            margin-bottom: 5px;
+        }
+        .server-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); flex-shrink: 0; }
+        .server-name { font-size: 0.82rem; color: var(--text); }
+        .server-meta { font-size: 0.7rem; color: var(--text-dim); margin-top: 2px; }
+        .server-players { margin-left: auto; font-size: 0.72rem; color: var(--text-dim); }
+        .no-servers { font-size: 0.8rem; color: var(--text-dim); }
+
+        /* ── TOOLS PAGE ── */
+        #page-tools {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: 22px 26px;
+        }
+
+        .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 820px) { .tools-grid { grid-template-columns: 1fr; } }
+        .col-span-2 { grid-column: 1 / -1; }
+
+        .card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            padding: 16px;
+        }
+        .card-title {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 14px;
+        }
+
+        .form-group { margin-bottom: 11px; }
+        label {
+            display: block;
+            font-size: 0.68rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 4px;
+        }
+        input[type="text"], input[type="number"], textarea, select {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border2);
+            color: var(--text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            padding: 7px 9px;
+            outline: none;
+            transition: border-color 0.12s;
+        }
+        input:focus, textarea:focus, select:focus { border-color: var(--text-dim); }
+        textarea { resize: vertical; min-height: 75px; }
+        select option { background: var(--bg2); }
+        .num-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+        .btn {
+            width: 100%;
+            padding: 8px;
+            background: transparent;
+            border: 1px solid var(--border2);
+            color: var(--text-dim);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.79rem;
+            cursor: pointer;
+            transition: all 0.12s;
+            position: relative;
+        }
+        .btn:hover { color: var(--text); border-color: var(--text-dim); }
+        .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .btn-sm { width: auto; padding: 5px 11px; font-size: 0.74rem; }
+
+        .cooldown-overlay {
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.55);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.78rem; color: var(--text-dim);
+            pointer-events: none;
+        }
+
+        .toast {
+            font-size: 0.73rem;
+            margin-top: 7px;
+            padding: 5px 8px;
+            border: 1px solid;
+        }
+        .toast.ok  { color: var(--ok);  border-color: rgba(74,222,128,0.25); }
+        .toast.err { color: var(--err); border-color: rgba(248,113,113,0.25); }
+
+        .mode-switch { display: flex; gap: 5px; margin-bottom: 10px; }
+        .mode-btn {
+            padding: 4px 10px; border: 1px solid var(--border2);
+            background: transparent; color: var(--text-dim);
+            font-family: 'JetBrains Mono', monospace; font-size: 0.73rem;
+            cursor: pointer; transition: all 0.12s;
+        }
+        .mode-btn.active { color: var(--text); border-color: var(--text-dim); }
+
+        .progress-bar { width: 100%; height: 3px; background: var(--bg3); margin-top: 8px; }
+        .progress-fill { height: 100%; background: var(--text-dim); transition: width 0.3s; }
+
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border2); }
     </style>
 </head>
 <body>
-    <div class="spinner-sidebar">
-        <div class="spinner">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+
+<nav class="sidebar">
+    <div class="sidebar-logo">
+        <h1>Holy Proxy</h1>
+        <p>Remote Admin</p>
+    </div>
+    <div class="sidebar-nav">
+        <div class="nav-item active" onclick="switchPage('console')" data-page="console">Console</div>
+        <div class="nav-item" onclick="switchPage('servers')" data-page="servers">Servers</div>
+        <div class="nav-item" onclick="switchPage('tools')" data-page="tools">Tools</div>
+    </div>
+    <div class="sidebar-conn">
+        <input type="text" id="backendUrl" placeholder="ngrok url…">
+        <button class="btn-connect" onclick="testConnection()">Connect</button>
+        <div class="conn-status" id="connStatus">disconnected</div>
+    </div>
+</nav>
+
+<div class="main">
+
+    <!-- CONSOLE -->
+    <div id="page-console">
+        <div class="terminal-body" id="termOut">
+            <div class="tl dim">type help for cmds</div>
+        </div>
+        <div class="terminal-input">
+            <span class="term-prompt">&gt;</span>
+            <input type="text" class="term-input" id="consoleInput" autocomplete="off" spellcheck="false">
         </div>
     </div>
-    
-    <div class="main-content">
-        <div class="container">
-            <header>
-                <h1>Holy Proxy</h1>
-                <p class="subtitle">Remote admin</p>
-            </header>
-            <div class="config-section">
-                <div class="config-header">
-                    <h3>Backend Configuration</h3>
-                    <span id="connectionStatus" class="connection-status disconnected">Disconnected</span>
+
+    <!-- SERVERS -->
+    <div id="page-servers">
+        <div class="page-section-label">Active Servers</div>
+        <div id="serversList"><div class="no-servers">Connect to a backend to see servers</div></div>
+    </div>
+
+    <!-- TOOLS -->
+    <div id="page-tools">
+        <div class="tools-grid">
+
+            <div class="card">
+                <div class="card-title">WAV Player</div>
+                <form onsubmit="sendWAV(event)">
+                    <div class="form-group">
+                        <label>Server</label>
+                        <select id="wavServer" required><option value="">Select server…</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label>URL</label>
+                        <input type="text" id="wavUrl" placeholder="https://…" required>
+                    </div>
+                    <button class="btn" type="submit" id="wavBtn">Play WAV</button>
+                </form>
+                <div id="wavStatus"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Image to Roblox</div>
+                <div class="mode-switch">
+                    <button type="button" class="mode-btn active" onclick="switchImageMode('file')" id="fileModeBtn">File</button>
+                    <button type="button" class="mode-btn" onclick="switchImageMode('url')" id="urlModeBtn">URL</button>
+                </div>
+                <div id="fileInputSection">
+                    <div class="form-group">
+                        <label>Image File</label>
+                        <input type="file" id="imageFile" accept="image/*" style="padding:6px;font-size:0.76rem;">
+                    </div>
+                </div>
+                <div id="urlInputSection" style="display:none;">
+                    <div class="form-group">
+                        <label>Image URL</label>
+                        <input type="text" id="imageUrl" placeholder="https://…">
+                    </div>
+                </div>
+                <div class="num-row">
+                    <div class="form-group">
+                        <label>Width (px)</label>
+                        <input type="number" id="imgWidth" value="25" min="10" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Height (px)</label>
+                        <input type="number" id="imgHeight" value="25" min="10" max="100">
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label for="backendUrl">Backend URL</label>
-                    <input type="text" id="backendUrl" placeholder="https://your-ngrok-url.ngrok-free.app" value="">
+                    <label style="display:flex;align-items:center;gap:7px;text-transform:none;letter-spacing:0;font-size:0.76rem;">
+                        <input type="checkbox" id="useCompression" checked style="width:auto;"> Compression
+                    </label>
                 </div>
-                <button onclick="testConnection()">Connect</button>
-                <div id="configStatus"></div>
-            </div>
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('admin')">Admin</button>
-                <button class="tab" onclick="switchTab('console')">Console</button>
-                <button class="tab" onclick="switchTab('tools')">Tools</button>
-            </div>
-            <div id="adminTab" class="tab-content active">
-                <div class="grid">
-                    <div class="card">
-                        <h2>Send Hint</h2>
-                        <form id="hintForm" onsubmit="sendHint(event)">
-                            <div class="form-group">
-                                <label for="hintServer">Server</label>
-                                <select id="hintServer" required><option value="">Select server...</option></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="hintMessage">Message</label>
-                                <textarea id="hintMessage" placeholder="Enter hint message..." required></textarea>
-                            </div>
-                            <div class="number-input-group">
-                                <div class="form-group">
-                                    <label for="typeSpeed">Type Speed (s)</label>
-                                    <input type="number" id="typeSpeed" value="0.05" step="0.01" min="0.01">
-                                </div>
-                                <div class="form-group">
-                                    <label for="displayTime">Display (s)</label>
-                                    <input type="number" id="displayTime" value="3" step="0.5" min="0.5">
-                                </div>
-                            </div>
-                            <button type="submit" id="hintBtn">Send</button>
-                        </form>
-                        <div id="hintStatus"></div>
+                <button class="btn" onclick="convertImage()" id="convertBtn">Convert</button>
+                <div id="imageStatus"></div>
+                <div id="imageOutput" style="display:none;margin-top:12px;">
+                    <div class="form-group">
+                        <label>Generated Code</label>
+                        <textarea id="generatedCode" readonly style="min-height:100px;font-size:0.73rem;"></textarea>
                     </div>
-                    <div class="card">
-                        <h2>Execute Code</h2>
-                        <!-- FIX: renamed textarea id from "runCode" to "runCodeInput" to avoid
-                             collision with the runCode() function, which caused form submit
-                             to resolve to the DOM element instead of the function and refresh the page -->
-                        <form id="runForm" onsubmit="runCode(event)">
-                            <div class="form-group">
-                                <label for="runServer">Server</label>
-                                <select id="runServer" required><option value="">Select server...</option></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="runCodeInput">Luau Code</label>
-                                <textarea id="runCodeInput" placeholder="print('Hello from proxy')" required></textarea>
-                            </div>
-                            <button type="submit" id="runBtn">Execute</button>
-                        </form>
-                        <div id="runStatus"></div>
-                    </div>
-                    <div class="card full-width">
-                        <h2>Active Servers</h2>
-                        <div id="serversList" class="servers-grid">
-                            <div class="no-servers">Configure backend URL to see servers</div>
-                        </div>
-                    </div>
+                    <button class="btn btn-sm" onclick="copyCode()" style="margin-bottom:6px;">Copy</button>
+                    <div id="imageStats" style="font-size:0.71rem;color:var(--text-dim);margin-top:6px;white-space:pre-line;line-height:1.6;"></div>
                 </div>
             </div>
-            <div id="consoleTab" class="tab-content">
-                <div class="card">
-                    <h2>Console</h2>
-                    <div class="terminal" id="terminalOutput">
-                        <div class="terminal-line info">Console ready — type <span style="color:var(--green)">cmds</span> for help</div>
-                        <div class="terminal-line"></div>
+
+            <div class="card col-span-2">
+                <div class="card-title">Video to Roblox</div>
+                <div class="form-group">
+                    <label>Video File</label>
+                    <input type="file" id="videoFile" accept="video/*" style="padding:6px;font-size:0.76rem;">
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+                    <div class="form-group">
+                        <label>Width (px)</label>
+                        <input type="number" id="videoWidth" value="100" min="10" max="200">
                     </div>
-                    <div class="input-line">
-                        <span class="prompt">&gt;</span>
-                        <input type="text" id="consoleInput" class="command-input" placeholder="type command..." autocomplete="off" autofocus>
+                    <div class="form-group">
+                        <label>Height (px)</label>
+                        <input type="number" id="videoHeight" value="100" min="10" max="200">
+                    </div>
+                    <div class="form-group">
+                        <label>FPS</label>
+                        <input type="number" id="videoFPS" value="5" min="1" max="30">
                     </div>
                 </div>
-            </div>
-            <div id="toolsTab" class="tab-content">
-                <div class="grid">
-                    <div class="card">
-                        <h2>WAV Player</h2>
-                        <form id="wavForm" onsubmit="sendWAV(event)">
-                            <div class="form-group">
-                                <label for="wavServer">Server</label>
-                                <select id="wavServer" required><option value="">Select server...</option></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="wavUrl">URL</label>
-                                <input type="text" id="wavUrl" placeholder="usecatbox" required>
-                            </div>
-                            <button type="submit" id="wavBtn">Play WAV</button>
-                        </form>
-                        <div id="wavStatus"></div>
+                <div class="form-group">
+                    <label>Max Duration (s)</label>
+                    <input type="number" id="videoDuration" value="10" min="1" max="60">
+                </div>
+                <button class="btn" onclick="convertVideo()" id="videoConvertBtn">Convert Video</button>
+                <div id="videoProgress" style="display:none;margin-top:8px;">
+                    <div class="progress-bar"><div class="progress-fill" id="videoProgressFill" style="width:0%"></div></div>
+                    <div style="font-size:0.71rem;color:var(--text-dim);margin-top:4px;" id="videoProgressText">Processing…</div>
+                </div>
+                <div id="videoStatus"></div>
+                <div id="videoOutput" style="display:none;margin-top:12px;">
+                    <div class="form-group">
+                        <label>Generated Video Code</label>
+                        <textarea id="generatedVideoCode" readonly style="min-height:150px;font-size:0.71rem;"></textarea>
                     </div>
-                    <div class="card">
-                        <h2>Image to Roblox Converter</h2>
-                        <div class="form-group">
-                            <label>Input Method</label>
-                            <div style="display:flex;gap:10px;margin-bottom:12px;">
-                                <button type="button" onclick="switchImageMode('file')" id="fileModeBtn" style="width:auto;padding:8px 16px;background:var(--green);">File Upload</button>
-                                <button type="button" onclick="switchImageMode('url')" id="urlModeBtn" style="width:auto;padding:8px 16px;background:var(--bg-lighter);border:1px solid var(--border);">Image URL</button>
-                            </div>
-                        </div>
-                        <div id="fileInputSection">
-                            <div class="form-group">
-                                <label for="imageFile">Select Image</label>
-                                <input type="file" id="imageFile" accept="image/*" style="padding:8px;">
-                            </div>
-                        </div>
-                        <div id="urlInputSection" style="display:none;">
-                            <div class="form-group">
-                                <label for="imageUrl">Image URL</label>
-                                <input type="text" id="imageUrl" placeholder="https://example.com/image.png">
-                            </div>
-                        </div>
-                        <div class="number-input-group">
-                            <div class="form-group">
-                                <label for="imgWidth">Width (px)</label>
-                                <input type="number" id="imgWidth" value="25" min="10" max="100">
-                            </div>
-                            <div class="form-group">
-                                <label for="imgHeight">Height (px)</label>
-                                <input type="number" id="imgHeight" value="25" min="10" max="100">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label style="display:flex;align-items:center;cursor:pointer;">
-                                <input type="checkbox" id="useCompression" checked style="width:auto;margin-right:8px;">
-                                Use compression
-                            </label>
-                        </div>
-                        <button onclick="convertImage()" id="convertBtn">Convert Image</button>
-                        <div id="imageStatus"></div>
-                        <div id="imageOutput" style="display:none;margin-top:20px;">
-                            <div class="form-group">
-                                <label>Generated Code</label>
-                                <textarea id="generatedCode" readonly style="min-height:150px;font-size:0.8rem;"></textarea>
-                            </div>
-                            <button onclick="copyCode()" style="background:var(--green-darker);">Copy to Clipboard</button>
-                            <div style="margin-top:12px;padding:12px;background:var(--bg);border:1px solid var(--border);font-size:0.85rem;" id="imageStats"></div>
-                        </div>
+                    <div style="display:flex;gap:7px;">
+                        <button class="btn btn-sm" onclick="copyVideoCode()">Copy</button>
+                        <button class="btn btn-sm" onclick="downloadVideoCode()">Download .txt</button>
                     </div>
-                    <div class="card full-width">
-                        <h2>Video to Roblox Converter</h2>
-                        <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:16px;">
-                            Convert videos.
-                        </p>
-                        
-                        <div class="form-group">
-                            <label for="videoFile">Select Video</label>
-                            <input type="file" id="videoFile" accept="video/*" style="padding:8px;">
-                        </div>
-                        <div class="grid" style="grid-template-columns:1fr 1fr 1fr;gap:12px;">
-                            <div class="form-group">
-                                <label for="videoWidth">Width (px)</label>
-                                <input type="number" id="videoWidth" value="100" min="10" max="200">
-                            </div>
-                            <div class="form-group">
-                                <label for="videoHeight">Height (px)</label>
-                                <input type="number" id="videoHeight" value="100" min="10" max="200">
-                            </div>
-                            <div class="form-group">
-                                <label for="videoFPS">FPS</label>
-                                <input type="number" id="videoFPS" value="5" min="1" max="30">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="videoDuration">Max Duration (seconds)</label>
-                            <input type="number" id="videoDuration" value="10" min="1" max="60">
-                        </div>
-                        <button onclick="convertVideo()" id="videoConvertBtn">Convert Video</button>
-                        
-                        <div id="videoProgress" style="display:none;margin-top:12px;">
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="videoProgressFill" style="width:0%;">0%</div>
-                            </div>
-                            <div style="margin-top:8px;font-size:0.85rem;color:var(--text-dim);" id="videoProgressText">Processing...</div>
-                        </div>
-                        
-                        <div id="videoStatus"></div>
-                        <div id="videoOutput" style="display:none;margin-top:20px;">
-                            <div class="form-group">
-                                <label>Generated Video Code</label>
-                                <textarea id="generatedVideoCode" readonly style="min-height:200px;font-size:0.75rem;"></textarea>
-                            </div>
-                            <button onclick="copyVideoCode()" style="background:var(--green-darker);">Copy to Clipboard</button>
-                            <button onclick="downloadVideoCode()" style="background:var(--green-darker);margin-top:8px;">Download as .txt</button>
-                            <div style="margin-top:12px;padding:12px;background:var(--bg);border:1px solid var(--border);font-size:0.85rem;white-space:pre-line;" id="videoStats"></div>
-                        </div>
-                    </div>
+                    <div id="videoStats" style="font-size:0.71rem;color:var(--text-dim);margin-top:7px;white-space:pre-line;line-height:1.6;"></div>
                 </div>
             </div>
+
         </div>
     </div>
-    <script>
-        let servers = [];
-        let backendUrl = localStorage.getItem('backendUrl') || '';
-        let refreshInterval;
-        
-        let adminCooldown = false;
-        let consoleCooldown = false;
-        let adminCooldownTimer = null;
-        let consoleCooldownTimer = null;
-        let currentImageMode = 'file';
-        
-        window.addEventListener('DOMContentLoaded', () => {
-            if (backendUrl) {
-                document.getElementById('backendUrl').value = backendUrl;
-                testConnection();
-            }
+
+</div>
+
+<script>
+let servers = [];
+let backendUrl = localStorage.getItem('backendUrl') || '';
+let refreshInterval;
+let consoleCooldown = false;
+let currentImageMode = 'file';
+
+/* ── PAGE SWITCH ── */
+function switchPage(page) {
+    document.getElementById('page-console').style.display  = page === 'console'  ? 'flex'  : 'none';
+    document.getElementById('page-servers').style.display  = page === 'servers'  ? 'block' : 'none';
+    document.getElementById('page-tools').style.display    = page === 'tools'    ? 'block' : 'none';
+    document.querySelectorAll('.nav-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.page === page);
+    });
+    if (page === 'console') consoleInput.focus();
+}
+
+/* ── CONNECTION ── */
+async function testConnection() {
+    const url = document.getElementById('backendUrl').value.trim().replace(/\/$/,'');
+    if (!url) return;
+    localStorage.setItem('backendUrl', url);
+    backendUrl = url;
+    setConnStatus(null);
+    try {
+        const r = await fetch(`${url}/latestservers`, { headers: {'ngrok-skip-browser-warning':'69420'} });
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const d = await r.json();
+        servers = d.servers || [];
+        setConnStatus(true, servers.length);
+        renderServers(); updateSelects();
+        if (refreshInterval) clearInterval(refreshInterval);
+        refreshInterval = setInterval(loadServers, 5000);
+    } catch(err) { setConnStatus(false); }
+}
+
+function setConnStatus(ok, count) {
+    const el = document.getElementById('connStatus');
+    if (ok === null) { el.textContent = 'connecting…'; el.className = 'conn-status'; return; }
+    if (ok) { el.textContent = `connected (${count})`; el.className = 'conn-status ok'; }
+    else { el.textContent = 'disconnected'; el.className = 'conn-status err'; }
+}
+
+async function loadServers() {
+    if (!backendUrl) return;
+    try {
+        const r = await fetch(`${backendUrl}/latestservers`, { headers: {'ngrok-skip-browser-warning':'69420'} });
+        if (!r.ok) throw new Error();
+        const d = await r.json();
+        servers = d.servers || [];
+        renderServers(); updateSelects();
+        setConnStatus(true, servers.length);
+    } catch { setConnStatus(false); }
+}
+
+function renderServers() {
+    const el = document.getElementById('serversList');
+    if (!servers.length) { el.innerHTML = '<div class="no-servers">No active servers</div>'; return; }
+    el.innerHTML = servers.map(s => `
+        <div class="server-item">
+            <div class="server-dot"></div>
+            <div>
+                <div class="server-name">${s.serverId} — ${s.name||'Unnamed'}</div>
+                <div class="server-meta">Place ${s.placeId} · Job ${(s.jobId||'?').substring(0,16)}…</div>
+            </div>
+            <div class="server-players">${s.players||0} online</div>
+        </div>
+    `).join('');
+}
+
+function updateSelects() {
+    const opts = servers.map(s => `<option value="${s.serverId}">${s.serverId} — ${s.name||'?'} (${s.players||0})</option>`).join('');
+    const ph = '<option value="">Select server…</option>';
+    ['wavServer'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = ph + opts;
+    });
+}
+
+/* ── TOAST ── */
+function toast(id, msg, ok=true) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = `<div class="toast ${ok?'ok':'err'}">${msg}</div>`;
+    setTimeout(() => el.innerHTML = '', 5000);
+}
+
+/* ── BTN COOLDOWN ── */
+function startBtnCooldown(btnId, secs) {
+    const btn = document.getElementById(btnId);
+    btn.disabled = true;
+    const ov = document.createElement('div');
+    ov.className = 'cooldown-overlay';
+    let r = secs; ov.textContent = r + 's';
+    btn.appendChild(ov);
+    const iv = setInterval(() => {
+        r--;
+        if (r > 0) { ov.textContent = r + 's'; }
+        else { clearInterval(iv); btn.removeChild(ov); btn.disabled = false; }
+    }, 1000);
+}
+
+/* ── WAV ── */
+async function sendWAV(e) {
+    e.preventDefault();
+    if (!backendUrl) return toast('wavStatus','Connect to backend first',false);
+    const data = { serverId: document.getElementById('wavServer').value, url: document.getElementById('wavUrl').value.trim() };
+    if (!data.url) return toast('wavStatus','URL cannot be empty',false);
+    try {
+        const r = await fetch(`${backendUrl}/api/sound`, {
+            method:'POST', headers:{'Content-Type':'application/json','ngrok-skip-browser-warning':'69420'},
+            body: JSON.stringify(data)
         });
-        
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.getElementById(tabName + 'Tab').classList.add('active');
-            if (tabName === 'console') document.getElementById('consoleInput').focus();
-        }
-        
-        function getBackendUrl() {
-            const url = document.getElementById('backendUrl').value.trim();
-            if (!url) {
-                showStatus('configStatus', 'Please enter a backend URL', true);
-                return null;
-            }
-            return url.replace(/\/$/, '');
-        }
-        
-        async function testConnection() {
-            const url = getBackendUrl();
-            if (!url) return;
-            localStorage.setItem('backendUrl', url);
-            backendUrl = url;
-            showStatus('configStatus', 'Testing connection...', false);
-            try {
-                const res = await fetch(`${url}/latestservers`, {
-                    headers: { 'ngrok-skip-browser-warning': '69420' }
-                });
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
-                showStatus('configStatus', `Connected — ${data.count || data.servers?.length || 0} server(s)`, false);
-                updateConnectionStatus(true);
-                loadServers();
-                if (refreshInterval) clearInterval(refreshInterval);
-                refreshInterval = setInterval(loadServers, 5000);
-            } catch (err) {
-                showStatus('configStatus', `Connection failed: ${err.message}`, true);
-                updateConnectionStatus(false);
-            }
-        }
-        
-        function updateConnectionStatus(connected) {
-            const el = document.getElementById('connectionStatus');
-            el.className = 'connection-status ' + (connected ? 'connected' : 'disconnected');
-            el.textContent = connected ? 'Connected' : 'Disconnected';
-        }
-        
-        async function loadServers() {
-            if (!backendUrl) return;
-            try {
-                const res = await fetch(`${backendUrl}/latestservers`, {
-                    headers: { 'ngrok-skip-browser-warning': '69420' }
-                });
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
-                servers = data.servers || [];
-                updateServersList();
-                updateServerSelects();
-                updateConnectionStatus(true);
-            } catch (err) {
-                console.error(err);
-                updateConnectionStatus(false);
-            }
-        }
-        
-        function updateServersList() {
-            const container = document.getElementById('serversList');
-            if (servers.length === 0) {
-                container.innerHTML = '<div class="no-servers">No active servers</div>';
-                return;
-            }
-            container.innerHTML = servers.map(s => `
-                <div class="server-item">
-                    <div class="server-info">
-                        <div class="server-name">${s.serverId} - ${s.name || 'Unnamed'}</div>
-                        <div class="server-details">Place ${s.placeId} • Job ${s.jobId?.substring(0,16)||'?'}...</div>
-                    </div>
-                    <div class="server-players">${s.players||0} players</div>
-                </div>
-            `).join('');
-        }
-        
-        function updateServerSelects() {
-            const hint = document.getElementById('hintServer');
-            const run = document.getElementById('runServer');
-            const wav = document.getElementById('wavServer');
-            const opts = servers.map(s => 
-                `<option value="${s.serverId}">${s.serverId} - ${s.name||'?'} (${s.players||0})</option>`
-            ).join('');
-            const ph = '<option value="">Select server...</option>';
-            hint.innerHTML = ph + opts;
-            run.innerHTML = ph + opts;
-            wav.innerHTML = ph + opts;
-        }
-        
-        function showStatus(id, msg, isError = false) {
-            const el = document.getElementById(id);
-            const cls = isError ? 'status-error' : 'status-success';
-            el.innerHTML = `<div class="status-message ${cls}">${msg}</div>`;
-            setTimeout(() => el.innerHTML = '', 6000);
-        }
-        
-        function startAdminCooldown(buttonId, seconds) {
-            adminCooldown = true;
-            const btn = document.getElementById(buttonId);
-            btn.disabled = true;
-            
-            let remaining = seconds;
-            const overlay = document.createElement('div');
-            overlay.className = 'cooldown-overlay';
-            overlay.textContent = `${remaining}s`;
-            btn.appendChild(overlay);
-            
-            const interval = setInterval(() => {
-                remaining--;
-                if (remaining > 0) {
-                    overlay.textContent = `${remaining}s`;
-                } else {
-                    clearInterval(interval);
-                    btn.removeChild(overlay);
-                    btn.disabled = false;
-                    adminCooldown = false;
-                }
-            }, 1000);
-        }
-        
-        async function sendHint(e) {
-            e.preventDefault();
-            if (adminCooldown) {
-                showStatus('hintStatus', 'Please wait for cooldown', true);
-                return;
-            }
-            if (!backendUrl) return showStatus('hintStatus', 'Configure backend first', true);
-            const data = {
-                serverId: document.getElementById('hintServer').value,
-                message: document.getElementById('hintMessage').value.trim(),
-                typeSpeed: parseFloat(document.getElementById('typeSpeed').value),
-                displayTime: parseFloat(document.getElementById('displayTime').value)
-            };
-            if (!data.message) return showStatus('hintStatus', 'Message cannot be empty', true);
-            try {
-                const res = await fetch(`${backendUrl}/api/hint`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': '69420' },
-                    body: JSON.stringify(data)
-                });
-                const r = await res.json();
-                if (r.success) {
-                    showStatus('hintStatus', `Hint #${r.hintNum || '?'} queued`, false);
-                    document.getElementById('hintMessage').value = '';
-                    startAdminCooldown('hintBtn', 2);
-                } else {
-                    showStatus('hintStatus', r.error || 'Request failed', true);
-                }
-            } catch (err) {
-                showStatus('hintStatus', err.message, true);
-            }
-        }
-        
-        async function runCode(e) {
-            e.preventDefault();
-            if (adminCooldown) {
-                showStatus('runStatus', 'Please wait for cooldown', true);
-                return;
-            }
-            if (!backendUrl) return showStatus('runStatus', 'Configure backend first', true);
-            const data = {
-                serverId: document.getElementById('runServer').value,
-                // FIX: updated to match renamed textarea id "runCodeInput"
-                code: document.getElementById('runCodeInput').value.trim()
-            };
-            if (!data.code) return showStatus('runStatus', 'Code cannot be empty', true);
-            try {
-                const res = await fetch(`${backendUrl}/api/run`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': '69420' },
-                    body: JSON.stringify(data)
-                });
-                const r = await res.json();
-                if (r.success) {
-                    showStatus('runStatus', `Code #${r.runNum || '?'} queued`, false);
-                    // FIX: updated to match renamed textarea id "runCodeInput"
-                    document.getElementById('runCodeInput').value = '';
-                    startAdminCooldown('runBtn', 2);
-                } else {
-                    showStatus('runStatus', r.error || 'Request failed', true);
-                }
-            } catch (err) {
-                showStatus('runStatus', err.message, true);
-            }
-        }
-        
-        async function sendWAV(e) {
-            e.preventDefault();
-            if (adminCooldown) {
-                showStatus('wavStatus', 'Please wait for cooldown', true);
-                return;
-            }
-            if (!backendUrl) return showStatus('wavStatus', 'Configure backend first', true);
-            
-            const data = {
-                serverId: document.getElementById('wavServer').value,
-                url: document.getElementById('wavUrl').value.trim()
-            };
-            
-            if (!data.url) return showStatus('wavStatus', 'URL cannot be empty', true);
-            
-            try {
-                const res = await fetch(`${backendUrl}/api/sound`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': '69420' },
-                    body: JSON.stringify(data)
-                });
-                const r = await res.json();
-                if (r.success) {
-                    showStatus('wavStatus', `WAV #${r.wavNum || '?'} queued for playback`, false);
-                    document.getElementById('wavUrl').value = '';
-                    startAdminCooldown('wavBtn', 2);
-                } else {
-                    showStatus('wavStatus', r.error || 'Request failed', true);
-                }
-            } catch (err) {
-                showStatus('wavStatus', err.message, true);
-            }
-        }
-        
-        // ────────────────────────────── IMAGE CONVERTER ──────────────────────────────
-        function switchImageMode(mode) {
-            currentImageMode = mode;
-            const fileSection = document.getElementById('fileInputSection');
-            const urlSection = document.getElementById('urlInputSection');
-            const fileBtn = document.getElementById('fileModeBtn');
-            const urlBtn = document.getElementById('urlModeBtn');
-            if (mode === 'file') {
-                fileSection.style.display = 'block';
-                urlSection.style.display = 'none';
-                fileBtn.style.background = 'var(--green)';
-                fileBtn.style.border = 'none';
-                urlBtn.style.background = 'var(--bg-lighter)';
-                urlBtn.style.border = '1px solid var(--border)';
-            } else {
-                fileSection.style.display = 'none';
-                urlSection.style.display = 'block';
-                urlBtn.style.background = 'var(--green)';
-                urlBtn.style.border = 'none';
-                fileBtn.style.background = 'var(--bg-lighter)';
-                fileBtn.style.border = '1px solid var(--border)';
-            }
-        }
-        
-        function isCloseToBlack(r, g, b, threshold = 10) {
-            return r < threshold && g < threshold && b < threshold;
-        }
-        
-        function compressColors(colors) {
-            if (!colors || colors.length === 0) return [];
-            
-            const compressed = [];
-            let currentColor = colors[0];
-            let count = 1;
-            
-            for (let i = 1; i < colors.length; i++) {
-                if (colors[i] === currentColor) {
-                    count++;
-                } else {
-                    if (count > 2) {
-                        compressed.push(`${currentColor}*${count}`);
-                    } else {
-                        for (let j = 0; j < count; j++) {
-                            compressed.push(currentColor);
-                        }
-                    }
-                    currentColor = colors[i];
-                    count = 1;
-                }
-            }
-            
-            // Add last group
-            if (count > 2) {
-                compressed.push(`${currentColor}*${count}`);
-            } else {
-                for (let j = 0; j < count; j++) {
-                    compressed.push(currentColor);
-                }
-            }
-            
-            return compressed;
-        }
-        
-        async function convertImage() {
-            const width = parseInt(document.getElementById('imgWidth').value);
-            const height = parseInt(document.getElementById('imgHeight').value);
-            const useCompression = document.getElementById('useCompression').checked;
-            let imageSource;
-            if (currentImageMode === 'file') {
-                const fileInput = document.getElementById('imageFile');
-                if (!fileInput.files || fileInput.files.length === 0) {
-                    showStatus('imageStatus', 'Please select an image file', true);
-                    return;
-                }
-                imageSource = fileInput.files[0];
-            } else {
-                const urlInput = document.getElementById('imageUrl').value.trim();
-                if (!urlInput) {
-                    showStatus('imageStatus', 'Please enter an image URL', true);
-                    return;
-                }
-                imageSource = urlInput;
-            }
-            showStatus('imageStatus', 'Converting image...', false);
-            try {
-                const img = new Image();
-                img.crossOrigin = 'anonymous';
-                await new Promise((resolve, reject) => {
-                    img.onload = resolve;
-                    img.onerror = () => reject(new Error('Failed to load image'));
-                    
-                    if (typeof imageSource === 'string') {
-                        img.src = imageSource;
-                    } else {
-                        const reader = new FileReader();
-                        reader.onload = (e) => { img.src = e.target.result; };
-                        reader.onerror = () => reject(new Error('Failed to read file'));
-                        reader.readAsDataURL(imageSource);
-                    }
-                });
-                // Create canvas and resize
-                const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-                // Get pixel data
-                const imageData = ctx.getImageData(0, 0, width, height);
-                const pixels = imageData.data;
-                // Generate color codes
-                const allColors = [];
-                for (let i = 0; i < pixels.length; i += 4) {
-                    const r = pixels[i];
-                    const g = pixels[i + 1];
-                    const b = pixels[i + 2];
-                    if (isCloseToBlack(r, g, b)) {
-                        allColors.push('a');
-                    } else {
-                        const hex = ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
-                        allColors.push(hex);
-                    }
-                }
-                // Apply compression if enabled
-                const colorData = useCompression ? compressColors(allColors) : allColors;
-                // Create code string
-                const resolutionStr = `${width}x${height}`;
-                const colorString = colorData.join(' ');
-                const codeString = `${resolutionStr}\n${colorString}`;
-                // Calculate statistics
-                const originalLength = allColors.join(' ').length;
-                const compressedLength = colorString.length;
-                const compressionRatio = useCompression ? ((1 - compressedLength / originalLength) * 100) : 0;
-                const CHAT_LIMIT = 200;
-                // Display results
-                document.getElementById('generatedCode').value = codeString;
-                document.getElementById('imageOutput').style.display = 'block';
-                let stats = `Resolution: ${width}x${height}\n`;
-                stats += `Total pixels: ${allColors.length}\n`;
-                stats += `Original code length: ${originalLength} characters\n`;
-                
-                if (useCompression) {
-                    stats += `Compressed code length: ${compressedLength} characters\n`;
-                    stats += `Compression ratio: ${compressionRatio.toFixed(1)}%\n\n`;
-                } else {
-                    stats += `Code length: ${compressedLength} characters\n\n`;
-                }
-                if (codeString.length < CHAT_LIMIT) {
-                    stats += `✓ Fits in ONE Roblox chat message!\n\n`;
-                } else {
-                    const chunksNeeded = Math.ceil(codeString.length / CHAT_LIMIT);
-                    stats += `⚠ Needs ${chunksNeeded} chat messages (exceeds ${CHAT_LIMIT} char limit)\n`;
-                    stats += `  Consider using a smaller resolution or simpler image\n\n`;
-                }
-                stats += `To use in Roblox:\n  :image <paste the code>`;
-                document.getElementById('imageStats').textContent = stats;
-                showStatus('imageStatus', 'Image converted successfully!', false);
-            } catch (err) {
-                showStatus('imageStatus', `Error: ${err.message}`, true);
-            }
-        }
-        
-        function copyCode() {
-            const codeArea = document.getElementById('generatedCode');
-            codeArea.select();
-            document.execCommand('copy');
-            
-            const originalText = event.target.textContent;
-            event.target.textContent = 'Copied!';
-            setTimeout(() => {
-                event.target.textContent = originalText;
-            }, 2000);
-        }
-        
-        // ────────────────────────────── VIDEO CONVERTER ──────────────────────────────
-        async function convertVideo() {
-            const fileInput = document.getElementById('videoFile');
-            if (!fileInput.files || fileInput.files.length === 0) {
-                showStatus('videoStatus', 'Please select a video file', true);
-                return;
-            }
-            const width = parseInt(document.getElementById('videoWidth').value);
-            const height = parseInt(document.getElementById('videoHeight').value);
-            const fps = parseInt(document.getElementById('videoFPS').value);
-            const duration = parseInt(document.getElementById('videoDuration').value);
-            const videoFile = fileInput.files[0];
-            
-            // Show progress
-            document.getElementById('videoProgress').style.display = 'block';
-            document.getElementById('videoOutput').style.display = 'none';
-            updateVideoProgress(10, 'Loading video...');
-            try {
-                // Create video element
-                const video = document.createElement('video');
-                video.src = URL.createObjectURL(videoFile);
-                video.muted = true;
-                await new Promise((resolve, reject) => {
-                    video.onloadedmetadata = resolve;
-                    video.onerror = () => reject(new Error('Failed to load video'));
-                });
-                const videoDuration = Math.min(video.duration, duration);
-                const frameInterval = 1 / fps;
-                const totalFrames = Math.floor(videoDuration * fps);
-                updateVideoProgress(20, `Processing ${totalFrames} frames...`);
-                // Create canvas for frame extraction
-                const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                const frames = [];
-                
-                for (let i = 0; i < totalFrames; i++) {
-                    const currentTime = i * frameInterval;
-                    video.currentTime = currentTime;
-                    
-                    await new Promise(resolve => {
-                        video.onseeked = resolve;
-                    });
-                    // Draw frame to canvas
-                    ctx.drawImage(video, 0, 0, width, height);
-                    const imageData = ctx.getImageData(0, 0, width, height);
-                    const pixels = imageData.data;
-                    // Convert pixels to color codes
-                    const frameColors = [];
-                    for (let j = 0; j < pixels.length; j += 4) {
-                        const r = pixels[j];
-                        const g = pixels[j + 1];
-                        const b = pixels[j + 2];
-                        if (isCloseToBlack(r, g, b)) {
-                            frameColors.push('a');
-                        } else {
-                            const hex = ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0').toUpperCase();
-                            frameColors.push(hex);
-                        }
-                    }
-                    frames.push(`FRAME${i + 1}, ${frameColors.join(' ')}`);
-                    
-                    // Update progress
-                    const progress = 20 + Math.floor((i / totalFrames) * 70);
-                    updateVideoProgress(progress, `Processing frame ${i + 1}/${totalFrames}...`);
-                }
-                updateVideoProgress(95, 'Generating code...');
-                // Create final code string
-                const resolutionStr = `${width}x${height}`;
-                const codeString = `${resolutionStr}\n${fps}\n${frames.join('\n')}`;
-                // Calculate statistics
-                const codeLength = codeString.length;
-                const estimatedFileSize = (codeLength / 1024).toFixed(2);
-                // Display results
-                document.getElementById('generatedVideoCode').value = codeString;
-                document.getElementById('videoOutput').style.display = 'block';
-                updateVideoProgress(100, 'Complete!');
-                let stats = `Resolution: ${width}x${height}\n`;
-                stats += `FPS: ${fps}\n`;
-                stats += `Frames: ${totalFrames}\n`;
-                stats += `Duration: ${videoDuration.toFixed(2)}s\n`;
-                stats += `Code length: ${codeLength.toLocaleString()} characters\n`;
-                stats += `Estimated file size: ${estimatedFileSize} KB\n\n`;
-                stats += `To use in Roblox:\n  :video <paste the code>`;
-                document.getElementById('videoStats').textContent = stats;
-                showStatus('videoStatus', 'Video converted successfully!', false);
-                // Clean up
-                URL.revokeObjectURL(video.src);
-                setTimeout(() => {
-                    document.getElementById('videoProgress').style.display = 'none';
-                }, 2000);
-            } catch (err) {
-                showStatus('videoStatus', `Error: ${err.message}`, true);
-                document.getElementById('videoProgress').style.display = 'none';
-            }
-        }
-        
-        function updateVideoProgress(percent, text) {
-            const fill = document.getElementById('videoProgressFill');
-            const textEl = document.getElementById('videoProgressText');
-            fill.style.width = percent + '%';
-            fill.textContent = percent + '%';
-            textEl.textContent = text;
-        }
-        
-        function copyVideoCode() {
-            const codeArea = document.getElementById('generatedVideoCode');
-            codeArea.select();
-            document.execCommand('copy');
-            
-            const originalText = event.target.textContent;
-            event.target.textContent = 'Copied!';
-            setTimeout(() => {
-                event.target.textContent = originalText;
-            }, 2000);
-        }
-        
-        function downloadVideoCode() {
-            const code = document.getElementById('generatedVideoCode').value;
-            const blob = new Blob([code], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'video_code.txt';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-        
-        // ────────────────────────────── CONSOLE ──────────────────────────────
-        const terminal = document.getElementById('terminalOutput');
-        const cmdInput = document.getElementById('consoleInput');
-        
-        function addLine(text, className = '') {
-            const div = document.createElement('div');
-            div.className = 'terminal-line ' + className;
-            div.textContent = text;
-            terminal.appendChild(div);
-            terminal.scrollTop = terminal.scrollHeight;
-        }
-        
-        function addPlayerList(players) {
-            if (!players || players.length === 0) {
-                addLine("  (no players online)", "info");
-                return;
-            }
-            addLine(`  ${players.length} player${players.length === 1 ? '' : 's'}:`, "info");
-            players.forEach(p => {
-                addLine(`    • ${p.name}  (ID: ${p.userId})`, "player-list");
-            });
-        }
-        
-        async function fetchPlayers(serverId) {
-            if (!backendUrl) {
-                addLine("Backend not connected", "error");
-                return;
-            }
-            try {
-                const res = await fetch(`${backendUrl}/api/players/${serverId}`, {
-                    headers: { 'ngrok-skip-browser-warning': '69420' }
-                });
-                if (!res.ok) {
-                    throw new Error(`HTTP ${res.status}`);
-                }
-                const data = await res.json();
-                if (!data.success) {
-                    addLine(`Error: ${data.error || "Failed to load players"}`, "error");
-                    return;
-                }
-                addPlayerList(data.players);
-            } catch (err) {
-                addLine(`Failed to fetch players: ${err.message}`, "error");
-            }
-        }
-        
-        async function sendModCommand(type, serverId, playerName, reason) {
-            if (!backendUrl) {
-                addLine("Backend not connected", "error");
-                return;
-            }
-            try {
-                const res = await fetch(`${backendUrl}/api/${type}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'ngrok-skip-browser-warning': '69420'
-                    },
-                    body: JSON.stringify({ serverId, playerName, reason })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    addLine(`[${type.toUpperCase()}] #${data.modNum || '?'} queued → "${playerName}" on ${serverId}`, "success");
-                    if (reason && reason !== "No reason provided") {
-                        addLine(`  Reason: ${reason}`, "info");
-                    }
-                } else {
-                    addLine(`Error: ${data.error || "Request failed"}`, "error");
-                }
-            } catch (err) {
-                addLine(`Network error: ${err.message}`, "error");
-            }
-        }
-        
-        function startConsoleCooldown() {
-            consoleCooldown = true;
-            cmdInput.disabled = true;
-            cmdInput.placeholder = 'Cooldown active...';
-            
-            let remaining = 5;
-            addLine(`⏱ Cooldown: ${remaining}s`, 'info');
-            
-            consoleCooldownTimer = setInterval(() => {
-                remaining--;
-                if (remaining > 0) {
-                    const lines = terminal.querySelectorAll('.terminal-line');
-                    const lastLine = lines[lines.length - 1];
-                    if (lastLine && lastLine.textContent.startsWith('⏱')) {
-                        lastLine.textContent = `⏱ Cooldown: ${remaining}s`;
-                    }
-                } else {
-                    clearInterval(consoleCooldownTimer);
-                    cmdInput.disabled = false;
-                    cmdInput.placeholder = 'type command...';
-                    consoleCooldown = false;
-                    addLine('✓ Ready', 'success');
-                    cmdInput.focus();
-                }
-            }, 1000);
-        }
-        
-        function handleCommand(raw) {
-            const cmd = raw.trim();
-            if (!cmd) return;
-            
-            if (consoleCooldown) {
-                addLine('> ' + cmd);
-                addLine('⚠ Command on cooldown, please wait', 'error');
-                return;
-            }
-            
-            addLine('> ' + cmd);
-            const parts = cmd.split(/\s+/);
-            const action = parts[0].toLowerCase();
-            const args = parts.slice(1);
-            
-            switch (action) {
-                case 'cmds':
-                case 'help':
-                    addLine('Available commands:', 'info');
-                    addLine('  plrs <serverId>                        → list players in server', 'info');
-                    addLine('  kick <serverId> <playername> [reason]  → kick player', 'info');
-                    addLine('  ban  <serverId> <playername> [reason]  → ban (kick + note)', 'info');
-                    addLine('  kill <serverId> <playername>           → kill player', 'info');
-                    addLine('  cmds / help                            → this list', 'info');
-                    addLine('');
-                    startConsoleCooldown();
-                    break;
-                case 'plrs':
-                    if (args.length !== 1) {
-                        addLine("Usage: plrs <serverId>", 'error');
-                        addLine("Example: plrs server1", 'info');
-                        return;
-                    }
-                    const serverId = args[0];
-                    addLine(`Fetching players on ${serverId}...`, 'info');
-                    fetchPlayers(serverId);
-                    startConsoleCooldown();
-                    break;
-                case 'kick':
-                case 'ban':
-                case 'kill':
-                    if (args.length < 2) {
-                        addLine(`Usage: ${action} <serverId> <playername> [reason]`, 'error');
-                        return;
-                    }
-                    const modServerId = args[0];
-                    const playerName = args[1];
-                    const reason = args.slice(2).join(' ') || 'No reason provided';
-                    sendModCommand(action, modServerId, playerName, reason);
-                    startConsoleCooldown();
-                    break;
-                default:
-                    addLine(`Unknown command: ${action}`, 'error');
-                    addLine("Type 'cmds' for help", 'info');
-                    startConsoleCooldown();
-            }
-        }
-        
-        cmdInput.addEventListener('keydown', e => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                const val = cmdInput.value;
-                if (val.trim()) handleCommand(val);
-                cmdInput.value = '';
-            }
+        const j = await r.json();
+        if (j.success) { toast('wavStatus',`WAV #${j.wavNum||'?'} queued`); document.getElementById('wavUrl').value=''; startBtnCooldown('wavBtn',2); }
+        else toast('wavStatus', j.error||'Failed', false);
+    } catch(err) { toast('wavStatus', err.message, false); }
+}
+
+/* ── IMAGE ── */
+function switchImageMode(mode) {
+    currentImageMode = mode;
+    document.getElementById('fileInputSection').style.display = mode==='file'?'':'none';
+    document.getElementById('urlInputSection').style.display  = mode==='url'?'':'none';
+    document.getElementById('fileModeBtn').classList.toggle('active', mode==='file');
+    document.getElementById('urlModeBtn').classList.toggle('active', mode==='url');
+}
+
+function isCloseToBlack(r,g,b,t=10){return r<t&&g<t&&b<t;}
+
+function compressColors(colors) {
+    if (!colors.length) return [];
+    const out=[]; let cur=colors[0],cnt=1;
+    for(let i=1;i<colors.length;i++){
+        if(colors[i]===cur){cnt++;}
+        else{cnt>2?out.push(`${cur}*${cnt}`):Array.from({length:cnt},()=>out.push(cur));cur=colors[i];cnt=1;}
+    }
+    cnt>2?out.push(`${cur}*${cnt}`):Array.from({length:cnt},()=>out.push(cur));
+    return out;
+}
+
+async function convertImage() {
+    const w=parseInt(document.getElementById('imgWidth').value);
+    const h=parseInt(document.getElementById('imgHeight').value);
+    const useComp=document.getElementById('useCompression').checked;
+    let src;
+    if(currentImageMode==='file'){
+        const f=document.getElementById('imageFile');
+        if(!f.files||!f.files.length){toast('imageStatus','Select an image file',false);return;}
+        src=f.files[0];
+    } else {
+        const u=document.getElementById('imageUrl').value.trim();
+        if(!u){toast('imageStatus','Enter image URL',false);return;}
+        src=u;
+    }
+    toast('imageStatus','Converting…',true);
+    try {
+        const img=new Image(); img.crossOrigin='anonymous';
+        await new Promise((res,rej)=>{
+            img.onload=res; img.onerror=()=>rej(new Error('Failed to load'));
+            if(typeof src==='string'){img.src=src;}
+            else{const rd=new FileReader();rd.onload=e=>{img.src=e.target.result;};rd.onerror=()=>rej(new Error('Read error'));rd.readAsDataURL(src);}
         });
-        
-        terminal.addEventListener('click', () => {
-            if (!consoleCooldown) cmdInput.focus();
+        const cvs=document.createElement('canvas'); cvs.width=w; cvs.height=h;
+        const ctx=cvs.getContext('2d'); ctx.drawImage(img,0,0,w,h);
+        const px=ctx.getImageData(0,0,w,h).data;
+        const all=[];
+        for(let i=0;i<px.length;i+=4){
+            const r=px[i],g=px[i+1],b=px[i+2];
+            all.push(isCloseToBlack(r,g,b)?'a':((r<<16)|(g<<8)|b).toString(16).padStart(6,'0'));
+        }
+        const cd=useComp?compressColors(all):all;
+        const code=`${w}x${h}\n${cd.join(' ')}`;
+        const origLen=all.join(' ').length;
+        const compLen=code.length;
+        document.getElementById('generatedCode').value=code;
+        document.getElementById('imageOutput').style.display='';
+        const LIMIT=200;
+        let stats=`${w}x${h} · ${all.length} pixels · ${compLen} chars`;
+        if(useComp) stats+=` · ${((1-compLen/origLen)*100).toFixed(1)}% compression`;
+        stats+='\n'+(code.length<LIMIT?'fits in one chat message':`needs ${Math.ceil(code.length/LIMIT)} messages`);
+        document.getElementById('imageStats').textContent=stats;
+        toast('imageStatus','done',true);
+    } catch(err){toast('imageStatus','error: '+err.message,false);}
+}
+
+function copyCode(){document.getElementById('generatedCode').select();document.execCommand('copy');}
+
+/* ── VIDEO ── */
+async function convertVideo() {
+    const fi=document.getElementById('videoFile');
+    if(!fi.files||!fi.files.length){toast('videoStatus','Select a video file',false);return;}
+    const w=parseInt(document.getElementById('videoWidth').value);
+    const h=parseInt(document.getElementById('videoHeight').value);
+    const fps=parseInt(document.getElementById('videoFPS').value);
+    const dur=parseInt(document.getElementById('videoDuration').value);
+    document.getElementById('videoProgress').style.display='';
+    document.getElementById('videoOutput').style.display='none';
+    updVidProg(10,'loading…');
+    try {
+        const vid=document.createElement('video');
+        vid.src=URL.createObjectURL(fi.files[0]); vid.muted=true;
+        await new Promise((res,rej)=>{vid.onloadedmetadata=res;vid.onerror=()=>rej(new Error('load failed'));});
+        const vd=Math.min(vid.duration,dur);
+        const fi2=1/fps;
+        const tf=Math.floor(vd*fps);
+        updVidProg(20,`${tf} frames…`);
+        const cvs=document.createElement('canvas'); cvs.width=w; cvs.height=h;
+        const ctx=cvs.getContext('2d');
+        const frames=[];
+        for(let i=0;i<tf;i++){
+            vid.currentTime=i*fi2;
+            await new Promise(r=>{vid.onseeked=r;});
+            ctx.drawImage(vid,0,0,w,h);
+            const px=ctx.getImageData(0,0,w,h).data;
+            const fc=[];
+            for(let j=0;j<px.length;j+=4){
+                const r=px[j],g=px[j+1],b=px[j+2];
+                fc.push(isCloseToBlack(r,g,b)?'a':((r<<16)|(g<<8)|b).toString(16).padStart(6,'0').toUpperCase());
+            }
+            frames.push(`FRAME${i+1}, ${fc.join(' ')}`);
+            updVidProg(20+Math.floor((i/tf)*70),`frame ${i+1}/${tf}`);
+        }
+        updVidProg(95,'generating…');
+        const code=`${w}x${h}\n${fps}\n${frames.join('\n')}`;
+        document.getElementById('generatedVideoCode').value=code;
+        document.getElementById('videoOutput').style.display='';
+        updVidProg(100,'done');
+        document.getElementById('videoStats').textContent=`${w}x${h} · ${fps}fps · ${tf} frames · ${vd.toFixed(1)}s\n${code.length.toLocaleString()} chars`;
+        toast('videoStatus','done',true);
+        URL.revokeObjectURL(vid.src);
+        setTimeout(()=>document.getElementById('videoProgress').style.display='none',2000);
+    } catch(err){toast('videoStatus','error: '+err.message,false);document.getElementById('videoProgress').style.display='none';}
+}
+
+function updVidProg(pct,txt){
+    document.getElementById('videoProgressFill').style.width=pct+'%';
+    document.getElementById('videoProgressText').textContent=txt;
+}
+function copyVideoCode(){document.getElementById('generatedVideoCode').select();document.execCommand('copy');}
+function downloadVideoCode(){
+    const b=new Blob([document.getElementById('generatedVideoCode').value],{type:'text/plain'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='video_code.txt'; a.click();
+}
+
+/* ── CONSOLE ── */
+const termOut = document.getElementById('termOut');
+const consoleInput = document.getElementById('consoleInput');
+
+function tl(text, cls) {
+    const d = document.createElement('div');
+    d.className = 'tl' + (cls ? ' '+cls : '');
+    d.textContent = text;
+    termOut.appendChild(d);
+    termOut.scrollTop = termOut.scrollHeight;
+}
+
+async function apiPost(endpoint, data) {
+    if (!backendUrl) { tl('not connected', 'err'); return null; }
+    try {
+        const r = await fetch(`${backendUrl}/api/${endpoint}`, {
+            method:'POST',
+            headers:{'Content-Type':'application/json','ngrok-skip-browser-warning':'69420'},
+            body: JSON.stringify(data)
         });
-    </script>
+        return await r.json();
+    } catch(err) { tl('network error: '+err.message, 'err'); return null; }
+}
+
+async function apiGet(path) {
+    if (!backendUrl) { tl('not connected', 'err'); return null; }
+    try {
+        const r = await fetch(`${backendUrl}${path}`, { headers: {'ngrok-skip-browser-warning':'69420'} });
+        return await r.json();
+    } catch(err) { tl('network error: '+err.message, 'err'); return null; }
+}
+
+function startConsCooldown(secs) {
+    consoleCooldown = true;
+    consoleInput.disabled = true;
+    const iv = setInterval(() => {
+        secs--;
+        if (secs <= 0) {
+            clearInterval(iv);
+            consoleInput.disabled = false;
+            consoleCooldown = false;
+            consoleInput.focus();
+        }
+    }, 1000);
+}
+
+async function handleCommand(raw) {
+    const cmd = raw.trim();
+    if (!cmd) return;
+    if (consoleCooldown) return;
+
+    tl('> ' + cmd, 'dim');
+    const parts = cmd.split(/\s+/);
+    const action = parts[0].toLowerCase();
+    const args = parts.slice(1);
+
+    switch (action) {
+
+        case 'help': case 'cmds':
+            tl('');
+            tl('help / cmds', 'dim');
+            tl('servers', 'dim');
+            tl('plrs <sid>', 'dim');
+            tl('kick <sid> <name> [reason]', 'dim');
+            tl('ban  <sid> <name> [reason]', 'dim');
+            tl('kill <sid> <name>', 'dim');
+            tl('hint <sid> <message>', 'dim');
+            tl('run  <sid> <luau code>', 'dim');
+            tl('');
+            startConsCooldown(1);
+            break;
+
+        case 'servers': {
+            const d = await apiGet('/latestservers');
+            if (!d) break;
+            servers = d.servers || [];
+            renderServers(); updateSelects();
+            if (!servers.length) { tl('no active servers', 'dim'); break; }
+            servers.forEach(s => tl(`  ${s.serverId}  ${s.name||'?'}  (${s.players||0})`, 'dim'));
+            startConsCooldown(1);
+            break;
+        }
+
+        case 'plrs': {
+            if (!args[0]) { tl('usage: plrs <sid>', 'err'); break; }
+            const d = await apiGet(`/api/players/${args[0]}`);
+            if (!d) break;
+            if (!d.success) { tl(d.error||'failed', 'err'); break; }
+            const pl = d.players || [];
+            if (!pl.length) tl('no players online', 'dim');
+            else pl.forEach(p => tl(`  ${p.name}  (${p.userId})`, 'dim'));
+            startConsCooldown(2);
+            break;
+        }
+
+        case 'kick': case 'ban': case 'kill': {
+            if (args.length < 2) { tl(`usage: ${action} <sid> <name> [reason]`, 'err'); break; }
+            const d = await apiPost(action, { serverId:args[0], playerName:args[1], reason:args.slice(2).join(' ')||'No reason provided' });
+            if (!d) break;
+            if (d.success) tl(`${action} #${d.modNum||'?'} queued — ${args[1]}`, 'ok');
+            else tl(d.error||'failed', 'err');
+            startConsCooldown(2);
+            break;
+        }
+
+        case 'hint': {
+            if (args.length < 2) { tl('usage: hint <sid> <message>', 'err'); break; }
+            const d = await apiPost('hint', { serverId:args[0], message:args.slice(1).join(' '), typeSpeed:0.05, displayTime:3 });
+            if (!d) break;
+            if (d.success) tl(`hint #${d.hintNum||'?'} queued`, 'ok');
+            else tl(d.error||'failed', 'err');
+            startConsCooldown(2);
+            break;
+        }
+
+        case 'run': {
+            if (args.length < 2) { tl('usage: run <sid> <luau code>', 'err'); break; }
+            const d = await apiPost('run', { serverId:args[0], code:args.slice(1).join(' ') });
+            if (!d) break;
+            if (d.success) tl(`run #${d.runNum||'?'} queued`, 'ok');
+            else tl(d.error||'failed', 'err');
+            startConsCooldown(2);
+            break;
+        }
+
+        default:
+            tl('unknown: ' + action, 'err');
+            startConsCooldown(1);
+    }
+}
+
+consoleInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        const v = consoleInput.value;
+        consoleInput.value = '';
+        if (v.trim()) handleCommand(v);
+    }
+});
+termOut.addEventListener('click', () => { if (!consoleCooldown) consoleInput.focus(); });
+
+/* ── BOOT ── */
+window.addEventListener('DOMContentLoaded', () => {
+    if (backendUrl) {
+        document.getElementById('backendUrl').value = backendUrl;
+        testConnection();
+    }
+    consoleInput.focus();
+});
+</script>
 </body>
 </html>
