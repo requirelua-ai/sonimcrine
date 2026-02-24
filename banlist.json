@@ -208,5 +208,12 @@
     "reason": "this is a kid's game don't load nsfw",
     "bannedBy": "442.2",
     "bannedAt": "2026-02-21T15:23:32.390Z"
+  },
+  {
+    "userId": 1,
+    "username": "Roblox",
+    "reason": "USTUPIDNI",
+    "bannedBy": "442.2",
+    "bannedAt": "2026-02-24T04:35:56.283Z"
   }
 ]
