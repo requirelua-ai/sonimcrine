@@ -215,5 +215,12 @@
     "reason": "USTUPIDNI",
     "bannedBy": "442.2",
     "bannedAt": "2026-02-24T04:35:56.283Z"
+  },
+  {
+    "userId": 5323331,
+    "username": "kalborutong",
+    "reason": "IS IT TOOLATE",
+    "bannedBy": "442.dev",
+    "bannedAt": "2026-02-24T04:55:17.418Z"
   }
 ]
