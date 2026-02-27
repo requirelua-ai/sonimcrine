@@ -243,5 +243,12 @@
     "reason": "don't hack",
     "bannedBy": "442.2",
     "bannedAt": "2026-02-27T21:44:17.219Z"
+  },
+  {
+    "userId": 10502442173,
+    "username": "Ownereste",
+    "reason": "hacke",
+    "bannedBy": "442.2",
+    "bannedAt": "2026-02-27T21:45:57.106Z"
   }
 ]
