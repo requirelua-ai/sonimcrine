@@ -257,5 +257,12 @@
     "reason": "No reason provided",
     "bannedBy": "442.2",
     "bannedAt": "2026-03-07T04:06:04.152Z"
+  },
+  {
+    "userId": 3413278,
+    "username": "C00LKid",
+    "reason": "skidbro",
+    "bannedBy": "442.2",
+    "bannedAt": "2026-03-07T05:51:01.151Z"
   }
 ]
