@@ -1,1 +1,10 @@
-
+[
+  {
+    "userId": 5323331520,
+    "username": "Exploertreyson",
+    "reason": "testing",
+    "type": "require_banned",
+    "bannedBy": "442.2",
+    "bannedAt": "2026-04-26T21:58:11.421Z"
+  }
+]
