@@ -313,5 +313,12 @@
     "reason": "No reason provided",
     "bannedBy": "442.2",
     "bannedAt": "2026-04-25T18:01:46.251Z"
+  },
+  {
+    "userId": 10820329403,
+    "username": "IlIIllIIllIlllIIlIIl",
+    "reason": "hi",
+    "bannedBy": "442.2",
+    "bannedAt": "2026-04-26T20:34:06.553Z"
   }
 ]
