@@ -320,13 +320,5 @@
     "reason": "hi",
     "bannedBy": "442.2",
     "bannedAt": "2026-04-26T20:34:06.553Z"
-  },
-  {
-    "userId": 1316897,
-    "username": "skid1234",
-    "reason": "skid",
-    "type": "require_banned",
-    "bannedBy": "442.2",
-    "bannedAt": "2026-04-26T20:55:39.479Z"
   }
 ]
