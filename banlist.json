@@ -320,5 +320,13 @@
     "reason": "hi",
     "bannedBy": "442.2",
     "bannedAt": "2026-04-26T20:34:06.553Z"
+  },
+  {
+    "userId": 7191931854,
+    "username": "backup_1234485",
+    "reason": "always running maddoxs traveller slop",
+    "type": "normal",
+    "bannedBy": "442.2",
+    "bannedAt": "2026-04-30T21:22:09.867Z"
   }
 ]
