@@ -344,5 +344,13 @@
     "type": "normal",
     "bannedBy": "442.2",
     "bannedAt": "2026-05-01T23:01:57.287Z"
+  },
+  {
+    "userId": 3270554075,
+    "username": "TheFakeFew",
+    "reason": "playing condos, gtfo",
+    "type": "normal",
+    "bannedBy": "442.2",
+    "bannedAt": "2026-05-01T23:05:01.200Z"
   }
 ]
