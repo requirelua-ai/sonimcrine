@@ -336,5 +336,13 @@
     "type": "normal",
     "bannedBy": "442.2",
     "bannedAt": "2026-05-01T18:45:38.727Z"
+  },
+  {
+    "userId": 1182755659,
+    "username": "sirgavinthefirstone",
+    "reason": "erping with cobalt users",
+    "type": "normal",
+    "bannedBy": "442.2",
+    "bannedAt": "2026-05-01T23:01:57.287Z"
   }
 ]
