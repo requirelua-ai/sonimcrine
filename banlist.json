@@ -328,5 +328,13 @@
     "type": "normal",
     "bannedBy": "442.2",
     "bannedAt": "2026-04-30T21:22:09.867Z"
+  },
+  {
+    "userId": 4058855094,
+    "username": "Vixienshy",
+    "reason": "letting jkeep onto isb",
+    "type": "normal",
+    "bannedBy": "442.2",
+    "bannedAt": "2026-05-01T18:45:38.727Z"
   }
 ]
