@@ -360,13 +360,5 @@
     "type": "normal",
     "bannedBy": "442.2",
     "bannedAt": "2026-05-20T21:41:39.711Z"
-  },
-  {
-    "userId": 123808010,
-    "username": "trashhunam",
-    "reason": "No reason provided",
-    "type": "normal",
-    "bannedBy": "442.2",
-    "bannedAt": "2026-06-30T20:07:58.077Z"
   }
 ]
